@@ -1,0 +1,15 @@
+{
+    "name": "hexlet/code",
+    "description": "level 2 hexlet project",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evgenij Goldin",
+            "email": "goldin5@yandex.ru"
+        }
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    }
+}
