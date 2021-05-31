@@ -1,0 +1,2 @@
+gendiff:
+	./bin/gendiff

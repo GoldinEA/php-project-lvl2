@@ -1,2 +1,30 @@
-﻿#! php8-xdebug:latest php
+﻿#!/usr/bin/env php
+
 <?php
+$doc = <<<'DOCOPT'
+Generate diff
+
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff (-t|--test) <test>
+
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+  -t --test                     Test param
+
+DOCOPT;
+
+require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
+$params = array(
+    'argv'=>array_slice($_SERVER['argv'], 1),
+    'help'=>true,
+    'version'=>null,
+    'optionsFirst'=>false,
+);
+$args = Docopt::handle($doc);
+
+//var_dump($args);
+//foreach ($args as $k=>$v)
+//    echo $k.': '.json_encode($v).PHP_EOL;
