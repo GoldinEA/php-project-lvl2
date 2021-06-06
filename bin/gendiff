@@ -1,6 +1,8 @@
 ﻿#!/usr/bin/env php
 
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use function Differ\Diff\genDiff as genDiff;
 $doc = <<<'DOCOPT'
 Generate diff
 
@@ -26,5 +28,10 @@ $params = array(
 $args = Docopt::handle($doc);
 
 //var_dump($args);
-//foreach ($args as $k=>$v)
+if ($args->args['--format'] === 'genDiff') {
+    echo genDiff('../' . $args->args['<firstFile>'], '../' . $args->args['<secondFile>']);
+
+}
+
+//foreach ($ar as $k=>$v)
 //    echo $k.': '.json_encode($v).PHP_EOL;
