@@ -15,7 +15,8 @@
     "require": {
         "docopt/docopt": "^1.0",
         "squizlabs/php_codesniffer": "^3.6",
-        "funct/funct": "^1.5"
+        "funct/funct": "^1.5",
+        "symfony/yaml": "^5.3"
     },
     "autoload": {
         "files": [

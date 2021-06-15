@@ -3,15 +3,22 @@ declare(strict_types=1);
 
 namespace Differ\Diff;
 
-use function Funct\Object\toArray;
+use Symfony\Component\Yaml\Yaml;
 
-function genDiff(string $pathToFile1, string $pathToFile2): string
+const FORMAT_FILES = [
+    'yml',
+    'yaml',
+    'json'
+];
+
+function genDiff(string $pathToFile1, string $pathToFile2, string $format): string
 {
-    if (!file_exists($pathToFile1) || !file_exists($pathToFile2)) {
-        return false;
+    if (!file_exists($pathToFile1) || !file_exists($pathToFile2) || !in_array($format, FORMAT_FILES)) {
+        return '';
     }
-    $file1 = (array)json_decode(file_get_contents($pathToFile1));
-    $file2 = (array)json_decode(file_get_contents($pathToFile2));
+
+    $file1 = $format == 'yaml' || $format == 'yml' ? getYamlInfo($pathToFile1) : getJsonInfo($pathToFile1);
+    $file2 = $format == 'yaml' || $format == 'yml' ? getYamlInfo($pathToFile2) : getJsonInfo($pathToFile2);
 
     $intersect = array_intersect($file1, $file2);
     $diff1 = diffHandler(array_diff($file2, $intersect), '-');
@@ -20,6 +27,15 @@ function genDiff(string $pathToFile1, string $pathToFile2): string
     return createResult($arr);
 }
 
+function getJsonInfo(string $pathToFile): array
+{
+    return (array)json_decode(file_get_contents($pathToFile)) ?? [];
+}
+
+function getYamlInfo(string $pathToFile): array
+{
+    return Yaml::parseFile($pathToFile) ?? [];
+}
 
 function diffHandler(array $diff, string $char): array
 {

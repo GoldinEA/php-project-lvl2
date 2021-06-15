@@ -2,7 +2,10 @@
 
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
+require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
+
 use function Differ\Diff\genDiff as genDiff;
+
 $doc = <<<'DOCOPT'
 Generate diff
 
@@ -14,24 +17,16 @@ Usage:
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  --format <fmt>                Report format [default: stylish]
+  --format <fmt>                Report format [default: json]
 
 DOCOPT;
 
-require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
 $params = array(
-    'argv'=>array_slice($_SERVER['argv'], 1),
-    'help'=>true,
-    'version'=>null,
-    'optionsFirst'=>false,
+    'argv' => array_slice($_SERVER['argv'], 1),
+    'help' => true,
+    'version' => null,
+    'optionsFirst' => false,
 );
 $args = Docopt::handle($doc);
 
-//var_dump($args);
-if ($args->args['--format'] === 'genDiff') {
-    echo genDiff('../' . $args->args['<firstFile>'], '../' . $args->args['<secondFile>']);
-
-}
-
-//foreach ($ar as $k=>$v)
-//    echo $k.': '.json_encode($v).PHP_EOL;
+echo genDiff('../' . $args->args['<firstFile>'], '../' . $args->args['<secondFile>'], $args->args['--format']);
