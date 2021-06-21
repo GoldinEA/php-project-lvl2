@@ -20,7 +20,8 @@
     },
     "autoload": {
         "files": [
-            "src/Diff.php"
+            "src/Diff.php",
+            "src/Format.php"
         ]
     }
 }

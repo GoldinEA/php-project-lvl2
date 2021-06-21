@@ -3,33 +3,52 @@ declare(strict_types=1);
 
 namespace Differ\Diff;
 
+use Exception;
 use Symfony\Component\Yaml\Yaml;
+use function Differ\Format\diffHandler;
+use function Differ\Format\createResult;
 
-const FORMAT_FILES = [
-    'yml',
-    'yaml',
-    'json'
-];
 
+/**
+ * @throws Exception Стандартное исключение.
+ */
 function genDiff(string $pathToFile1, string $pathToFile2, string $format): string
 {
-    if (!file_exists($pathToFile1) || !file_exists($pathToFile2) || !in_array($format, FORMAT_FILES)) {
-        return '';
-    }
+    $dataFile1 = getFileData($pathToFile1);
+    $dataFile2 = getFileData($pathToFile2);
 
-    $file1 = $format == 'yaml' || $format == 'yml' ? getYamlInfo($pathToFile1) : getJsonInfo($pathToFile1);
-    $file2 = $format == 'yaml' || $format == 'yml' ? getYamlInfo($pathToFile2) : getJsonInfo($pathToFile2);
-
-    $intersect = array_intersect($file1, $file2);
-    $diff1 = diffHandler(array_diff($file2, $intersect), '-');
-    $diff2 = diffHandler(array_diff($file1, $intersect), '+');
+    $intersect = array_intersect($dataFile1, $dataFile2);
+    $diff = differ($dataFile1, $dataFile2);
+    $diff1 = diffHandler(array_diff($dataFile2, $intersect), '-');
+    $diff2 = diffHandler(array_diff($dataFile1, $intersect), '+');
     $arr = array_merge($intersect, $diff1, $diff2);
     return createResult($arr);
 }
 
+
+/**
+ * @throws Exception Стандартное исключение.
+ */
+function getFileData(string $pathToFile): array
+{
+    if (!file_exists($pathToFile)) {
+        throw new Exception("File $pathToFile is not found.");
+    }
+
+    $path = new \SplFileInfo($pathToFile);
+    $format = $path->getExtension();
+
+    return match ($format) {
+        'yaml', 'yml' => getYamlInfo($pathToFile),
+        'json' => getJsonInfo($pathToFile),
+        default => throw new Exception("Format file $format not found."),
+    };
+
+}
+
 function getJsonInfo(string $pathToFile): array
 {
-    return (array)json_decode(file_get_contents($pathToFile)) ?? [];
+    return json_decode(file_get_contents($pathToFile), true) ?? [];
 }
 
 function getYamlInfo(string $pathToFile): array
@@ -37,25 +56,16 @@ function getYamlInfo(string $pathToFile): array
     return Yaml::parseFile($pathToFile) ?? [];
 }
 
-function diffHandler(array $diff, string $char): array
+function differ(array $data1, array $data2): array
 {
-    $result = [];
-    foreach ($diff as $key => $item) {
-        $result["{$char} $key"] = $item;
-    }
+    $result = array_map(function ($elem1, $elem) {
+        if (is_array($elem1) || is_array($elem)) {
+            return differ($elem, $elem1);
+        }
+    }, $data1, $data2);
+
+    $keys = array_keys($data1);
+    $keys2 = array_keys($data2);
+
     return $result;
-}
-
-
-function createResult(array $diff): string
-{
-    $result = [];
-    $result[] = '{';
-    foreach ($diff as $index => $item) {
-        $item = $item === false ? 'false' : $item;
-        $result[] = "    $index: $item,";
-    }
-    $result[array_key_last($result)] = substr($result[array_key_last($result)], 0, -1);
-    $result[] = '}';
-    return implode(PHP_EOL, $result);
 }

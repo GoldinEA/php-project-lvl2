@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
 
-use function Differ\Diff\genDiff as genDiff;
+use function Differ\Diff\genDiff;
 
 $doc = <<<'DOCOPT'
 Generate diff
@@ -27,6 +27,7 @@ $params = array(
     'version' => null,
     'optionsFirst' => false,
 );
+
 $args = Docopt::handle($doc);
 
 echo genDiff('../' . $args->args['<firstFile>'], '../' . $args->args['<secondFile>'], $args->args['--format']);
