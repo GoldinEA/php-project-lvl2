@@ -58,14 +58,20 @@ function getYamlInfo(string $pathToFile): array
 
 function differ(array $data1, array $data2): array
 {
-    $result = array_map(function ($elem1, $elem) {
-        if (is_array($elem1) || is_array($elem)) {
-            return differ($elem, $elem1);
+    $result = [];
+    foreach ($data1 as $index => $item) {
+        if (!empty($data2[$index]) && is_array($item) && is_array($data2[$index])) {
+            $result[$index] = diff($item, $data2[$index]);
+            differ($item, $data2[$index]);
         }
-    }, $data1, $data2);
-
-    $keys = array_keys($data1);
-    $keys2 = array_keys($data2);
-
+    }
     return $result;
+}
+
+function diff(array $data, array $dataSecond)
+{
+    $intersect = array_intersect($data, $dataSecond);
+    $diff1 = diffHandler(array_diff($dataSecond, $intersect), '-');
+    $diff2 = diffHandler(array_diff($data, $intersect), '+');
+    return array_merge($intersect, $diff1, $diff2);
 }
