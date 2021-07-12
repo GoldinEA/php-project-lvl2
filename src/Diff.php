@@ -5,7 +5,7 @@ namespace Differ\Diff;
 
 use Exception;
 use Symfony\Component\Yaml\Yaml;
-use function Differ\Format\diffHandler;
+use function Format\diffHandler;
 use function Differ\Format\createResult;
 
 
@@ -16,13 +16,9 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format): stri
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
+    $diff = differ($dataFile1, $dataFile2);
 
-    $intersect = array_intersect($dataFile1, $dataFile2);
-    $diff = differ($dataFile1, $dataFile2, true);
-    $diff1 = diffHandler(array_diff($dataFile2, $intersect), '-');
-    $diff2 = diffHandler(array_diff($dataFile1, $intersect), '+');
-    $arr = array_merge($intersect, $diff1, $diff2);
-    return createResult($arr);
+    return createResult([]);
 }
 
 
@@ -56,31 +52,20 @@ function getYamlInfo(string $pathToFile): array
     return Yaml::parseFile($pathToFile) ?? [];
 }
 
-function differ(array $data1, array $data2, bool $firstStep = false): array
+function differ(array $dataFirstFile, array $dataLastFile)
 {
     $result = [];
-    if ($firstStep) {
-        $dataDiff1 = array_filter($data1, function ($value){
-            return !is_array($value);
-        }, ARRAY_FILTER_USE_BOTH);
-        $dataDiff2 = array_filter($data1, function ($value){
-            return !is_array($value);
-        }, ARRAY_FILTER_USE_BOTH);
-        $result = diff($dataDiff1, $dataDiff2);
-    }
-    foreach ($data1 as $index => $item) {
-        if (!empty($data2[$index]) && is_array($item) && is_array($data2[$index])) {
-            $result[$index] = diff($item, $data2[$index]);
-            differ($item, $data2[$index]);
+    $keysFirst = array_keys($dataFirstFile);
+    $keysLast = array_keys($dataLastFile);
+    $allKeys = array_merge($keysFirst, $keysLast);
+    foreach ($allKeys as $key) {
+        if(!isset($dataFirstFile[$key])){
+           $result['-'. $key] = $dataLastFile[$key];
+        } elseif (!isset($dataLastFile[$key])) {
+            $result['+'. $key] = $dataLastFile[$key];
+        } else {
+            $result[$key] = differ($dataFirstFile[$key], $dataLastFile[$key]);
         }
     }
     return $result;
-}
-
-function diff(array $data, array $dataSecond)
-{
-    $intersect = array_intersect($data, $dataSecond);
-    $diff1 = diffHandler(array_diff($dataSecond, $intersect), '-');
-    $diff2 = diffHandler(array_diff($data, $intersect), '+');
-    return array_merge($intersect, $diff1, $diff2);
 }
