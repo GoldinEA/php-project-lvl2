@@ -5,7 +5,7 @@ namespace Differ\Diff;
 
 use Exception;
 use Symfony\Component\Yaml\Yaml;
-use function Format\diffHandler;
+use function Differ\Format\diffHandler;
 use function Differ\Format\createResult;
 
 
@@ -16,8 +16,7 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format): stri
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
-    $diff = differ($dataFile1, $dataFile2);
-
+    $dataDiff = differ($dataFile1, $dataFile2);
     return createResult([]);
 }
 
@@ -59,12 +58,21 @@ function differ(array $dataFirstFile, array $dataLastFile)
     $keysLast = array_keys($dataLastFile);
     $allKeys = array_merge($keysFirst, $keysLast);
     foreach ($allKeys as $key) {
-        if(!isset($dataFirstFile[$key])){
-           $result['-'. $key] = $dataLastFile[$key];
+        if (!isset($dataFirstFile[$key])) {
+            $result['- ' . $key] = $dataLastFile[$key];
         } elseif (!isset($dataLastFile[$key])) {
-            $result['+'. $key] = $dataLastFile[$key];
+            $result['+ ' . $key] = $dataFirstFile[$key];
         } else {
-            $result[$key] = differ($dataFirstFile[$key], $dataLastFile[$key]);
+            if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
+                $result[$key] = differ($dataFirstFile[$key], $dataLastFile[$key]);
+            } elseif (!is_array($dataLastFile[$key]) && !is_array($dataFirstFile[$key])) {
+                $result[$key] = $dataLastFile[$key] === $dataFirstFile[$key]
+                    ? $dataLastFile[$key]
+                    : [
+                        '+ ' . $key = $dataFirstFile[$key],
+                        '- ' . $key = $dataLastFile[$key],
+                    ];
+            }
         }
     }
     return $result;
