@@ -69,8 +69,8 @@ function differ(array $dataFirstFile, array $dataLastFile)
                 $result[$key] = $dataLastFile[$key] === $dataFirstFile[$key]
                     ? $dataLastFile[$key]
                     : [
-                        "+ {$key}" => "$dataFirstFile[$key]",
-                        "- {$key}" => "$dataLastFile[$key]",
+                        "+ $key" => "$dataFirstFile[$key]",
+                        "- $key" => "$dataLastFile[$key]",
                     ];
             }
         }

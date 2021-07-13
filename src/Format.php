@@ -24,3 +24,18 @@ function createResult(array $diff): string
     $result[] = '}';
     return implode(PHP_EOL, $result);
 }
+
+function createBodyRequest(array $data) {
+    $result = [];
+    foreach ($data as $index => $item) {
+        if (is_array($item)) {
+            $result[] = createBodyRequest($item);
+        } else {
+            $item = $item === false ? 'false' : $item;
+            $result[] = "    $index: $item,";
+        }
+        $item = $item === false ? 'false' : $item;
+        $result[] = "    $index: $item,";
+    }
+    return $result;
+}
