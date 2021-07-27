@@ -14,12 +14,8 @@ function diffHandler(array $diff, string $char): array
 
 function createResult(array $diff): string
 {
-    $result = [];
-    $result[] = '{';
-    foreach ($diff as $index => $item) {
-        $item = $item === false ? 'false' : $item;
-        $result[] = "    $index: $item,";
-    }
+    $result = createBodyRequest($diff);
+    array_unshift($result, '{');
     $result[array_key_last($result)] = substr($result[array_key_last($result)], 0, -1);
     $result[] = '}';
     return implode(PHP_EOL, $result);
