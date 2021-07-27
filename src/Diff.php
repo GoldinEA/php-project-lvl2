@@ -57,10 +57,12 @@ function differ(array $dataFirstFile, array $dataLastFile)
     $keysFirst = array_keys($dataFirstFile);
     $keysLast = array_keys($dataLastFile);
     $allKeys = array_merge($keysFirst, $keysLast);
+
+//    $result = array_map(function () {}, $allKeys); TODO сделать через array_map.
     foreach ($allKeys as $key) {
-        if (!isset($dataFirstFile[$key])) {
+        if (!array_key_exists($key, $dataFirstFile)) {
             $result['- ' . $key] = $dataLastFile[$key];
-        } elseif (!isset($dataLastFile[$key])) {
+        } elseif (!array_key_exists($key, $dataLastFile)) {
             $result['+ ' . $key] = $dataFirstFile[$key];
         } else {
             if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
