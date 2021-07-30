@@ -18,7 +18,10 @@ function createResult(array $diff): string
     array_unshift($result, '{');
     $result[array_key_last($result)] = substr($result[array_key_last($result)], 0, -1);
     $result[] = '}';
-    return implode(PHP_EOL, $result);
+    $resultString = array_map(function ($value) {
+        return is_array($value) ? implode(PHP_EOL, $value) : $value;
+    }, $result);
+    return implode(PHP_EOL, $resultString);
 }
 
 function createBodyRequest(array $data) {
