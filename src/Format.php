@@ -14,27 +14,23 @@ function diffHandler(array $diff, string $char): array
 
 function createResult(array $diff): string
 {
-    $result = createBodyRequest($diff);
-    array_unshift($result, '{');
-    $result[array_key_last($result)] = substr($result[array_key_last($result)], 0, -1);
-    $result[] = '}';
-    $resultString = array_map(function ($value) {
-        return is_array($value) ? implode(PHP_EOL, $value) : $value;
-    }, $result);
-    return implode(PHP_EOL, $resultString);
+    $result = '{' . PHP_EOL;
+    $result .= createBodyRequest($diff, 1);
+    $result .= PHP_EOL. '}';
+    return $result;
 }
 
-function createBodyRequest(array $data) {
+function createBodyRequest(array $data, int $step = 1) {
     $result = [];
     foreach ($data as $index => $item) {
         if (is_array($item)) {
-            $result[] = createBodyRequest($item);
+            $result[] = createBodyRequest($item, $step + 1);
         } else {
             $item = $item === false ? 'false' : $item;
-            $result[] = "    $index: $item,";
+            $result[] = str_repeat(" ", 4 * $step) . "$index: $item,";
         }
         $item = $item === false ? 'false' : $item;
-        $result[] = "    $index: $item,";
+        $result[] = str_repeat(" ", 4 * $step) . "$index: $item,";
     }
-    return $result;
+    return implode(PHP_EOL, $result);
 }
