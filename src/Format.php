@@ -20,7 +20,8 @@ function createResult(array $diff): string
     return $result;
 }
 
-function createBodyRequest(array $data, int $step = 1) {
+function createBodyRequest(array $data, int $step = 1): string
+{
     $result = [];
     foreach ($data as $index => $item) {
         if (is_array($item)) {
@@ -29,8 +30,6 @@ function createBodyRequest(array $data, int $step = 1) {
             $item = $item === false ? 'false' : $item;
             $result[] = str_repeat(" ", 4 * $step) . "$index: $item,";
         }
-        $item = $item === false ? 'false' : $item;
-        $result[] = str_repeat(" ", 4 * $step) . "$index: $item,";
     }
     return implode(PHP_EOL, $result);
 }

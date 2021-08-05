@@ -68,12 +68,12 @@ function differ(array $dataFirstFile, array $dataLastFile)
             if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
                 $result[$key] = differ($dataFirstFile[$key], $dataLastFile[$key]);
             } elseif (!is_array($dataLastFile[$key]) && !is_array($dataFirstFile[$key])) {
-                $result[$key] = $dataLastFile[$key] === $dataFirstFile[$key]
-                    ? $dataLastFile[$key]
-                    : [
-                        "+ $key" => "$dataFirstFile[$key]",
-                        "- $key" => "$dataLastFile[$key]",
-                    ];
+                if ($dataLastFile[$key] === $dataFirstFile[$key]) {
+                    $result[$key] = $dataLastFile[$key];
+                } else {
+                    $result["+ $key"] = $dataFirstFile[$key];
+                    $result["- $key"] = $dataLastFile[$key];
+                }
             }
         }
     }
