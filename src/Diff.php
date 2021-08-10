@@ -79,3 +79,41 @@ function differ(array $dataFirstFile, array $dataLastFile)
     }
     return $result;
 }
+
+function createTree(array $dataFirstFile, array $dataLastFile)
+{
+    $keysFirst = array_keys($dataFirstFile);
+    $keysLast = array_keys($dataLastFile);
+    $allKeys = array_unique(array_merge($keysFirst, $keysLast));
+
+    $result = array_map(function ($value) use ($dataFirstFile, $dataLastFile) {
+        if (array_key_exists($value, $dataFirstFile) && array_key_exists($value, $dataLastFile)) {
+            if ($dataFirstFile[$value] === $dataLastFile[$value]) {
+                return ['overlap' => [$value => $dataLastFile[$value]]];
+            } else {
+                return [$value => [
+                    '+' => $dataFirstFile[$value],
+                    '-' => $dataLastFile[$value]
+                ]];
+            }
+        } else {
+            return array_key_exists($value, $dataFirstFile)
+                ? ['+' => [$value => $dataFirstFile[$value]]]
+                : ['-' => [$value => $dataLastFile[$value]]];
+        }
+    }, $allKeys);
+
+    $res = [];
+    foreach ($result as $index => $item) {
+        $keyFirst = array_key_first($item);
+        if (array_key_exists($keyFirst,$res)) {
+            $child = array_shift($item);
+
+            $res[$keyFirst][array_key_first($child)] = array_shift($child);
+        } else {
+            $res[$keyFirst] = array_shift($item);
+        }
+    }
+
+    return $res ?? [];
+}
