@@ -7,6 +7,7 @@ use Exception;
 use Symfony\Component\Yaml\Yaml;
 use function Differ\Format\diffHandler;
 use function Differ\Format\createResult;
+use function Funct\Collection\flatten;
 
 
 /**
@@ -89,7 +90,7 @@ function createTree(array $dataFirstFile, array $dataLastFile)
     $result = array_map(function ($value) use ($dataFirstFile, $dataLastFile) {
         if (array_key_exists($value, $dataFirstFile) && array_key_exists($value, $dataLastFile)) {
             if ($dataFirstFile[$value] === $dataLastFile[$value]) {
-                return ['overlap' => [$value => $dataLastFile[$value]]];
+                return [$value => $dataLastFile[$value]];
             } else {
                 return [$value => [
                     '+' => $dataFirstFile[$value],
@@ -103,12 +104,11 @@ function createTree(array $dataFirstFile, array $dataLastFile)
         }
     }, $allKeys);
 
-    $res = [];
-    foreach ($result as $index => $item) {
+     $res = [];
+    foreach ($result as $item) {
         $keyFirst = array_key_first($item);
-        if (array_key_exists($keyFirst,$res)) {
+        if (array_key_exists($keyFirst, $res)) {
             $child = array_shift($item);
-
             $res[$keyFirst][array_key_first($child)] = array_shift($child);
         } else {
             $res[$keyFirst] = array_shift($item);
