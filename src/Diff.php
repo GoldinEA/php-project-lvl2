@@ -13,11 +13,12 @@ use function Funct\Collection\flatten;
 /**
  * @throws Exception Стандартное исключение.
  */
-function genDiff(string $pathToFile1, string $pathToFile2, string $format): array
+function genDiff(string $pathToFile1, string $pathToFile2, string $format): string
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
-    return createTree($dataFile1, $dataFile2);
+    $tree = createTree($dataFile1, $dataFile2)
+    return createResult($tree, $format);
 }
 
 
@@ -51,35 +52,6 @@ function getYamlInfo(string $pathToFile): array
     return Yaml::parseFile($pathToFile) ?? [];
 }
 
-function differ(array $dataFirstFile, array $dataLastFile)
-{
-    $result = [];
-    $keysFirst = array_keys($dataFirstFile);
-    $keysLast = array_keys($dataLastFile);
-    $allKeys = array_merge($keysFirst, $keysLast);
-
-//    $result = array_map(function () {}, $allKeys); TODO сделать через array_map.
-    foreach ($allKeys as $key) {
-        if (!array_key_exists($key, $dataFirstFile)) {
-            $result['- ' . $key] = $dataLastFile[$key];
-        } elseif (!array_key_exists($key, $dataLastFile)) {
-            $result['+ ' . $key] = $dataFirstFile[$key];
-        } else {
-            if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
-                $result[$key] = differ($dataFirstFile[$key], $dataLastFile[$key]);
-            } elseif (!is_array($dataLastFile[$key]) && !is_array($dataFirstFile[$key])) {
-                if ($dataLastFile[$key] === $dataFirstFile[$key]) {
-                    $result[$key] = $dataLastFile[$key];
-                } else {
-                    $result["+ $key"] = $dataFirstFile[$key];
-                    $result["- $key"] = $dataLastFile[$key];
-                }
-            }
-        }
-    }
-    return $result;
-}
-
 function createTree(array $dataFirstFile, array $dataLastFile): array
 {
     $keysFirst = array_keys($dataFirstFile);
@@ -91,10 +63,10 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
                 ? ['name' => $key, 'type' => 'no_change', 'value' => $dataLastFile[$key]]
                 : ['name' => $key, 'type' => 'changed', 'value_added' => $dataLastFile[$key], 'value_deleted' => $dataFirstFile[$key]];
         } else {
-            return array_key_exists($key, $dataLastFile)
-                ? ['name' => $key, 'type' => 'added', 'value' => $dataLastFile[$key]]
-                : ['name' => $key, 'type' => 'deleted', 'value' => $dataFirstFile[$key]];
+            return array_key_exists($key, $dataFirstFile)
+                ? ['name' => $key, 'type' => 'deleted', 'value' => $dataFirstFile[$key]]
+                : ['name' => $key, 'type' => 'added', 'value' => $dataLastFile[$key]];
         }
     }, $allKeys);
-    return $result ?? [];
+    return array_values($result) ?? [];
 }

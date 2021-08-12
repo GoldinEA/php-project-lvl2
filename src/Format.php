@@ -12,7 +12,7 @@ function diffHandler(array $diff, string $char): array
     return $result;
 }
 
-function createResult(array $diff): string
+function createResult(array $diff, string $format): string
 {
     $result = '{' . PHP_EOL;
     $result .= createBodyRequest($diff, 1);
