@@ -17,7 +17,7 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format): stri
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
-    $tree = createTree($dataFile1, $dataFile2)
+    $tree = createTree($dataFile1, $dataFile2);
     return createResult($tree, $format);
 }
 
