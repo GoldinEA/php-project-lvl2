@@ -5,9 +5,7 @@ namespace Differ\Diff;
 
 use Exception;
 use Symfony\Component\Yaml\Yaml;
-use function Differ\Format\diffHandler;
 use function Differ\Format\createResult;
-use function Funct\Collection\flatten;
 
 
 /**
@@ -59,9 +57,14 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
     $result = array_map(function ($key) use ($dataFirstFile, $dataLastFile) {
         if (array_key_exists($key, $dataFirstFile) && array_key_exists($key, $dataLastFile)) {
-            return $dataFirstFile[$key] === $dataLastFile[$key]
-                ? ['name' => $key, 'type' => 'no_change', 'value' => $dataLastFile[$key]]
-                : ['name' => $key, 'type' => 'changed', 'value_added' => $dataLastFile[$key], 'value_deleted' => $dataFirstFile[$key]];
+            if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
+                $child = createTree($dataFirstFile[$key], $dataLastFile);
+                return ['name' => $key, 'type' => 'changed', 'multilevel' => true, 'value' => $child];
+            } else {
+                return $dataFirstFile[$key] === $dataLastFile[$key]
+                    ? ['name' => $key, 'type' => 'no_change', 'value' => $dataLastFile[$key]]
+                    : ['name' => $key, 'type' => 'changed', 'value_added' => $dataLastFile[$key], 'value_deleted' => $dataFirstFile[$key]];
+            }
         } else {
             return array_key_exists($key, $dataFirstFile)
                 ? ['name' => $key, 'type' => 'deleted', 'value' => $dataFirstFile[$key]]
