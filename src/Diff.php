@@ -66,10 +66,33 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
                     : ['name' => $key, 'type' => 'changed', 'value_added' => $dataLastFile[$key], 'value_deleted' => $dataFirstFile[$key]];
             }
         } else {
+            $valueFirstFile =array_key_exists($key, $dataFirstFile) ? createValueTree($dataFirstFile[$key]) : '';
+            $valueLastFile = array_key_exists($key, $dataLastFile) ? createValueTree($dataLastFile[$key]) : '';
             return array_key_exists($key, $dataFirstFile)
-                ? ['name' => $key, 'type' => 'deleted', 'value' => $dataFirstFile[$key]]
-                : ['name' => $key, 'type' => 'added', 'value' => $dataLastFile[$key]];
+                ? ['name' => $key, 'type' => 'deleted', 'value' => $valueFirstFile['value']]
+                : ['name' => $key, 'type' => 'added', 'value' => $valueLastFile['value']];
         }
     }, $allKeys);
     return array_values($result) ?? [];
 }
+
+function createValueTree($dataValue) {
+    if (is_array($dataValue)) {
+        $keys = array_keys($dataValue);
+        $result = array_map(function ($key) use ($dataValue) {
+            if (is_array($dataValue[$key])) {
+                $child = createValueTree($dataValue[$key]);
+                return ['name' => $key, 'type' => 'no_change', 'value' => $child['value']];
+            } else {
+                return ['name' => $key, 'type' => 'no_change', 'value' => $dataValue[$key]];
+            }
+        }, $keys);
+        return ['value' => $result];
+    } else {
+        return ['value' => $dataValue];
+    }
+}
+
+
+
+

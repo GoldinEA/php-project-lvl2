@@ -14,10 +14,28 @@ function diffHandler(array $diff, string $char): array
 
 function createResult(array $diff, string $format): string
 {
-    $result = '{' . PHP_EOL;
-    $result .= createBodyRequest($diff, 1);
-    $result .= PHP_EOL. '}';
-    return $result;
+    if (empty($format) || $format === 'default') {
+        return defaultFormat($diff, 1);
+    }
+    return '';
+}
+
+function defaultFormat(array $tree, int $step = 1): string
+{
+    $multiplicator = $step === 1 ? 4 : 2;
+    $formattedTree = array_map(function ($treeElement) {
+        if ($treeElement['type'] === 'no_change') {
+            return "    {$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+        } elseif($treeElement['type'] === 'changed') {
+            return "   +{$treeElement['name']}: " . (string)$treeElement['value_added'] . PHP_EOL
+                . "   -{$treeElement['name']}: ". (string)$treeElement['value_deleted'] . PHP_EOL;
+        } elseif($treeElement['type'] === 'deleted') {
+            return "   -{$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+        } elseif ($treeElement['type'] === 'added') {
+            return "   +{$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+        }
+    }, $tree);
+    return '{' . PHP_EOL . implode('', $formattedTree) . '}';
 }
 
 function createBodyRequest(array $data, int $step = 1): string
