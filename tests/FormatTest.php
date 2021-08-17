@@ -139,19 +139,19 @@ class FormatTest extends TestCase
         }';
 
 
-//    public function testDiffHandlerMultilevel()
-//    {
-//        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-//        $stringMultilevelResult = createResult($tree, 'default');
-//        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
-//    }
-
-    public function testDiffHandlerSinglelevel()
+    public function testDiffHandlerMultilevel()
     {
-        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
-        $stringSinglelevelResult = createResult($tree, 'default');
-        $this->assertEquals($this->resultSingleLevel, $stringSinglelevelResult);
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = createResult($tree, 'default');
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
+
+//    public function testDiffHandlerSinglelevel()
+//    {
+//        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
+//        $stringSinglelevelResult = createResult($tree, 'default');
+//        $this->assertEquals($this->resultSingleLevel, $stringSinglelevelResult);
+//    }
 
     public function testCreateResult()
     {
