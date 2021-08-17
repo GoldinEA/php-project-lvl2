@@ -58,7 +58,7 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
     $result = array_map(function ($key) use ($dataFirstFile, $dataLastFile) {
         if (array_key_exists($key, $dataFirstFile) && array_key_exists($key, $dataLastFile)) {
             if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
-                $child = createTree($dataFirstFile[$key], $dataLastFile);
+                $child = createTree($dataFirstFile[$key], $dataLastFile[$key]);
                 return ['name' => $key, 'type' => 'changed', 'multilevel' => true, 'value' => $child];
             } else {
                 return $dataFirstFile[$key] === $dataLastFile[$key]
