@@ -20,28 +20,36 @@ function createResult(array $diff, string $format): string
     return '';
 }
 
-function defaultFormat(array $tree, int $step = 1, string $name = ''): string
+function defaultFormat(array $tree, int $step = 1): string
 {
     $multiplicator = $step === 1 ? 4 : 2;
     $formattedTree = array_map(function ($treeElement) use ($step) {
         $multiplicator = $step === 1 ? 4 : 2;
-        if (is_array($treeElement['value'])) {
-            return defaultFormat($treeElement['value'], $step + 1, $treeElement['name']);
+        if (is_array($treeElement['value'] ?? false) ) {
+            return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . defaultFormat($treeElement['value'], $step + 1);
+        } elseif (is_array($treeElement['value_added'] ?? false) || is_array($treeElement['value_deleted'] ?? false)) {
+            $itemAdded = is_array($treeElement['value_added'])
+                ? str_repeat(" ", $multiplicator * $step) . "+{$treeElement['name']}: " . defaultFormat($treeElement['value_added'], $step + 1)
+                : str_repeat(" ", $multiplicator  * $step) . "+{$treeElement['name']}: " . $treeElement['value_added'];
+            $itemDeleted = is_array($treeElement['value_deleted'])
+                ? str_repeat(" ", $multiplicator * $step) . "-{$treeElement['name']}: " . defaultFormat($treeElement['value_deleted'], $step + 1)
+                : str_repeat(" ", $multiplicator * $step) . "-{$treeElement['name']}: " . $treeElement['value_deleted'];
+            return $itemAdded . $itemDeleted;
         } elseif ($treeElement['type'] === 'no_change') {
-            return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+            return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . $treeElement['value'];
         } elseif ($treeElement['type'] === 'changed') {
-            return str_repeat(" ", $multiplicator - 1 * $step) . "+{$treeElement['name']}: " . (string)$treeElement['value_added'] . PHP_EOL
-                . str_repeat(" ", $multiplicator - 1 * $step) . "-{$treeElement['name']}: " . (string)$treeElement['value_deleted'] . PHP_EOL;
+            return str_repeat(" ", $multiplicator  * $step) . "+{$treeElement['name']}: " . $treeElement['value_added']
+                . str_repeat(" ", $multiplicator * $step) . "-{$treeElement['name']}: " . $treeElement['value_deleted'];
         } elseif ($treeElement['type'] === 'deleted') {
-            return str_repeat(" ", $multiplicator - 1 * $step) . "-{$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+            return str_repeat(" ", $multiplicator * $step) . "-{$treeElement['name']}: " . $treeElement['value'];
         } elseif ($treeElement['type'] === 'added') {
-            return str_repeat(" ", $multiplicator - 1 * $step) . "+{$treeElement['name']}: " . (string)$treeElement['value'] . PHP_EOL;
+            return str_repeat(" ", $multiplicator * $step) . "+{$treeElement['name']}: " . $treeElement['value'];
         }
     }, $tree);
-    return $name !== ''
-        ? '{' . PHP_EOL . implode('', $formattedTree) . '}'
-        : $name .str_repeat(" ", $multiplicator * $step).'{' . PHP_EOL . implode('', $formattedTree) . '}';
+    return '{' . implode(PHP_EOL, $formattedTree) . '}';
 }
+
+
 
 function createBodyRequest(array $data, int $step = 1): string
 {

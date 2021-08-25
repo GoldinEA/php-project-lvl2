@@ -61,9 +61,21 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
                 $child = createTree($dataFirstFile[$key], $dataLastFile[$key]);
                 return ['name' => $key, 'type' => 'changed', 'multilevel' => true, 'value' => $child];
             } else {
+//                if ($dataFirstFile[$key] !== $dataLastFile[$key]) {
+//                    $valueAdded = is_array($dataLastFile[$key])
+//                        ? createValueTree($dataLastFile[$key])
+//                        : $dataLastFile[$key];
+//                    $valueDeleted =
+//                }
                 return $dataFirstFile[$key] === $dataLastFile[$key]
                     ? ['name' => $key, 'type' => 'no_change', 'value' => $dataLastFile[$key]]
-                    : ['name' => $key, 'type' => 'changed', 'value_added' => $dataLastFile[$key], 'value_deleted' => $dataFirstFile[$key]];
+                    : ['name' => $key, 'type' => 'changed',
+                        'value_added' => is_array($dataLastFile[$key])
+                            ? createValueTree($dataLastFile[$key])
+                            : $dataLastFile[$key],
+                        'value_deleted' => is_array(createValueTree($dataFirstFile[$key]))
+                            ? createValueTree($dataFirstFile[$key])
+                            : $dataFirstFile[$key]];
             }
         } else {
             $valueFirstFile = array_key_exists($key, $dataFirstFile) ? createValueTree($dataFirstFile[$key]) : '';
