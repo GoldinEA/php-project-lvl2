@@ -71,10 +71,10 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
                     ? ['name' => $key, 'type' => 'no_change', 'value' => $dataLastFile[$key]]
                     : ['name' => $key, 'type' => 'changed',
                         'value_added' => is_array($dataLastFile[$key])
-                            ? createValueTree($dataLastFile[$key])
+                            ? createValueTree($dataLastFile[$key])['value']
                             : $dataLastFile[$key],
                         'value_deleted' => is_array(createValueTree($dataFirstFile[$key]))
-                            ? createValueTree($dataFirstFile[$key])
+                            ? createValueTree($dataFirstFile[$key])['value']
                             : $dataFirstFile[$key]];
             }
         } else {
@@ -94,7 +94,7 @@ function createValueTree($dataValue) {
         $result = array_map(function ($key) use ($dataValue) {
             if (is_array($dataValue[$key])) {
                 $child = createValueTree($dataValue[$key]);
-                return ['name' => $key, 'type' => 'no_change', 'value' => $child['value']];
+                return ['name' => $key, 'type' => 'no_change', 'multilevel' => true, 'value' => $child['value']];
             } else {
                 return ['name' => $key, 'type' => 'no_change', 'value' => $dataValue[$key]];
             }
