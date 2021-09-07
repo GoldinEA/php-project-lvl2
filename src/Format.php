@@ -20,7 +20,7 @@ function createResult(array $diff, string $format): string
     return '';
 }
 
-function defaultFormat(array $tree, int $step = 1): string
+function defaultFormat(array $tree, int $step = 1, string $name = ''): string
 {
     $multiplicator = $step === 1 ? 4 : 2;
     $formattedTree = array_map(function ($treeElement) use ($step) {
@@ -48,8 +48,6 @@ function defaultFormat(array $tree, int $step = 1): string
     }, $tree);
     return '{' . implode(PHP_EOL, $formattedTree) . '}';
 }
-
-
 
 function createBodyRequest(array $data, int $step = 1): string
 {
