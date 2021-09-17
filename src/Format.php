@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Differ\Format;
 
+const BOOL_ARRAY = [true => 'true', false => 'false'];
+
 function diffHandler(array $diff, string $char): array
 {
     $result = [];
@@ -28,24 +30,30 @@ function defaultFormat(array $tree, int $step = 1): string
         $multiplicator = $step === 1 ? 4 : 2;
         if ($treeElement['multilevel'] === true) {
             if ($treeElement['multivalued'] === true) {
-                $strAdded = is_array($treeElement['value_added']) ? defaultFormat($treeElement['value_added'], $step + 1) : $treeElement['value_added'];
-                $strDeleted = is_array($treeElement['value_deleted']) ? defaultFormat($treeElement['value_deleted'], $step + 1) : $treeElement['value_deleted'];
-                return str_repeat(" ", $multiplicator * $step) . "+ {$treeElement['name']}: " . $strAdded. $spaces
-                    . str_repeat(" ", $multiplicator * $step) . "- {$treeElement['name']}: " . $strDeleted;
+                $strAdded = is_array($treeElement['value_added']) ? defaultFormat($treeElement['value_added'], $step + 1) : convertToString($treeElement['value_added']);
+                $strDeleted = is_array($treeElement['value_deleted']) ? defaultFormat($treeElement['value_deleted'], $step + 1) : convertToString($treeElement['value_deleted']);
+                return str_repeat(" ", ($multiplicator * $step) - 2) . "- {$treeElement['name']}: " . $strDeleted . $spaces
+                    . str_repeat(" ", ($multiplicator * $step) - 2) . "+ {$treeElement['name']}: " . $strAdded;
             } else {
-                return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . defaultFormat($treeElement['value'], $step + 1);
+                if ($treeElement['type'] === 'deleted') {
+                    return str_repeat(" ", ($multiplicator * $step) - 2) . "- {$treeElement['name']}: " . defaultFormat($treeElement['value'], $step + 1);
+                } elseif ($treeElement['type'] === 'added') {
+                    return str_repeat(" ", ($multiplicator * $step) - 2) . "+ {$treeElement['name']}: " . defaultFormat($treeElement['value'], $step + 1);
+                } else {
+                    return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . defaultFormat($treeElement['value'], $step + 1);
+                }
             }
         } else {
             switch ($treeElement['type']) {
                 case 'no_change':
-                    return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . $treeElement['value'];
+                    return str_repeat(" ", $multiplicator * $step) . "{$treeElement['name']}: " . convertToString($treeElement['value']);
                 case 'changed':
-                    return str_repeat(" ", $multiplicator * $step) . "+ {$treeElement['name']}: " . $treeElement['value_added']. $spaces
-                        . str_repeat(" ", $multiplicator * $step) . "- {$treeElement['name']}: " . $treeElement['value_deleted'];
+                    return str_repeat(" ", ($multiplicator * $step) - 2) . "- {$treeElement['name']}: " . convertToString($treeElement['value_deleted']). $spaces
+                        . str_repeat(" ", ($multiplicator * $step) - 2) . "+ {$treeElement['name']}: " . convertToString($treeElement['value_added']);
                 case 'deleted':
-                    return str_repeat(" ", $multiplicator * $step) . "- {$treeElement['name']}: " . $treeElement['value'];
+                    return str_repeat(" ", ($multiplicator * $step) - 2) . "- {$treeElement['name']}: " . convertToString($treeElement['value']);
                 case 'added':
-                    return str_repeat(" ", $multiplicator * $step) . "+ {$treeElement['name']}: " . $treeElement['value'];
+                    return str_repeat(" ", ($multiplicator * $step) - 2) . "+ {$treeElement['name']}: " . convertToString($treeElement['value']);
             }
         }
     }, $tree);
@@ -53,16 +61,11 @@ function defaultFormat(array $tree, int $step = 1): string
     return '{' . $spaces . implode($spaces, $formattedTree) . $spaces . '}';
 }
 
-function createBodyRequest(array $data, int $step = 1): string
+function convertToString(mixed $value): string
 {
-    $result = [];
-    foreach ($data as $index => $item) {
-        if (is_array($item)) {
-            $result[] = createBodyRequest($item, $step + 1);
-        } else {
-            $item = $item === false ? 'false' : $item;
-            $result[] = str_repeat(" ", 4 * $step) . "$index: $item,";
-        }
-    }
-    return implode(PHP_EOL, $result);
+    return match (true) {
+        $value === true, $value === false => BOOL_ARRAY[$value],
+        $value === null => 'null',
+        default => (string)$value,
+    };
 }
