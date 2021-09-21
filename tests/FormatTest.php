@@ -83,50 +83,95 @@ class FormatTest extends TestCase
     ];
 
     private $resultMultilevel =
+'{
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+            key5: value5
+        }
+        setting6: {
+            doge: {
+              - wow: 
+              + wow: so much
+            }
+            key: value
+          + ops: vops
+        }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+            key: value
+        }
+      + nest: str
+    }
+  - group2: {
+        abc: 12345
+        deep: {
+            id: 45
+        }
+    }
+  + group3: {
+        deep: {
+            id: {
+                number: 45
+            }
+        }
+        fee: 100500
+    }
+}';
+    private $resultMultilevelJson =
         '{
-            common: {
-              + follow: false
-                setting1: Value 1
-              - setting2: 200
-              - setting3: true
-              + setting3: null
-              + setting4: blah blah
-              + setting5: {
-                    key5: value5
-                }
-                setting6: {
-                    doge: {
-                      - wow: 
-                      + wow: so much
-                    }
-                    key: value
-                  + ops: vops
-                }
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+            key5: value5
+        }
+        setting6: {
+            doge: {
+              - wow: 
+              + wow: so much
             }
-            group1: {
-              - baz: bas
-              + baz: bars
-                foo: bar
-              - nest: {
-                    key: value
-                }
-              + nest: str
+            key: value
+          + ops: vops
+        }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+            key: value
+        }
+      + nest: str
+    }
+  - group2: {
+        abc: 12345
+        deep: {
+            id: 45
+        }
+    }
+  + group3: {
+        deep: {
+            id: {
+                number: 45
             }
-          - group2: {
-                abc: 12345
-                deep: {
-                    id: 45
-                }
-            }
-          + group3: {
-                deep: {
-                    id: {
-                        number: 45
-                    }
-                }
-                fee: 100500
-            }
-        }';
+        }
+        fee: 100500
+    }
+}';
 
     private $resultSingleLevel =
         '{
@@ -143,6 +188,20 @@ class FormatTest extends TestCase
     {
         $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
         $stringMultilevelResult = createResult($tree, 'default');
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+    }
+
+    public function testDiffHandlerMultilevelJson()
+    {
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = createResult($tree, 'json');
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+    }
+
+    public function testDiffHandlerMultilevelPlain()
+    {
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = createResult($tree, 'plain');
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 
