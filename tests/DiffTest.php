@@ -121,6 +121,7 @@ class DiffTest extends TestCase
                                     'type' => 'changed',
                                     'value_added' => NULL,
                                     'value_deleted' => true,
+                                    'multilevel' => false
                                 ],
                                 [
                                     'name' => 'setting6',
@@ -144,6 +145,7 @@ class DiffTest extends TestCase
                                                                     'type' => 'changed',
                                                                     'value_added' => 'so much',
                                                                     'value_deleted' => '',
+                                                                    'multilevel' => false
                                                                 ],
                                                         ],
                                                 ],
@@ -194,6 +196,7 @@ class DiffTest extends TestCase
                                     'type' => 'changed',
                                     'value_added' => 'bars',
                                     'value_deleted' => 'bas',
+                                    'multilevel' => false
                                 ],
                                 [
                                     'name' => 'foo',
@@ -212,6 +215,7 @@ class DiffTest extends TestCase
                                                     'value' => 'value',
                                                 ],
                                         ],
+                                    'multilevel' => true
                                 ],
                         ],
                 ],

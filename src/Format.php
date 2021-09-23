@@ -119,7 +119,7 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
                     : convertToString($treeElement['value_deleted']);
                 return "Property '{$name}' was updated. From {$strDeleted} to '{$strAdded}'";
             } else {
-                return "Property '{$name}' was {$status} with value : [complex value]"
+                return "Property '{$name}' was {$status} with value: [complex value]"
                     . PHP_EOL
                     . plainFormat($treeElement['value'], $step + 1, $structureName);
             }
@@ -136,7 +136,8 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
             }
         }
     }, $tree);
-    return implode(PHP_EOL, $formattedTree);
+    $clearDataPlain = array_filter($formattedTree);
+    return implode(PHP_EOL, $clearDataPlain);
 }
 
 function getPlainStatus(string $typeElement): string
