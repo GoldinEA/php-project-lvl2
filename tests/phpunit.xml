@@ -10,9 +10,9 @@
 		</report>
 	</coverage>
 	<testsuites>
-		<testsuite name="main">
-			<directory suffix="Test.php">.</directory>
-		</testsuite>
+        <testsuite name="difftest">
+            <directory suffix="tests/DiffTest.php">.</directory>
+        </testsuite>
 	</testsuites>
 	<logging/>
 </phpunit>
