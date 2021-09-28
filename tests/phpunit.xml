@@ -11,7 +11,7 @@
 	</coverage>
 	<testsuites>
         <testsuite name="difftest">
-            <directory suffix="tests/DiffTest.php">.</directory>
+            <directory suffix="./tests/DiffTest.php">.</directory>
         </testsuite>
 	</testsuites>
 	<logging/>
