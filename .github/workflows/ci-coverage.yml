@@ -21,4 +21,8 @@ jobs:
           args: --coverage-text
         env:
           XDEBUG_MODE: coverage
-          TEST_NAME: Scarlett
+          CC_TEST_REPORTER_ID: CODECLIMATE_COVERAGE_LVL_2
+      - uses: paambaati/codeclimate-action@v2.2.4
+        env:
+          XDEBUG_MODE: coverage
+          CC_TEST_REPORTER_ID: CODECLIMATE_COVERAGE_LVL_2
