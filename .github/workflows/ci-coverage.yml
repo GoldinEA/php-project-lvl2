@@ -1,41 +1,43 @@
+# Name of workflow
+name: PHP CI
 
-name: CI-coverage
-
-on: [push]
+# Trigger the workflow on push or pull request
+on:
+  - push
+  - pull_request
 
 jobs:
-  build-test:
+  build:
+
+    # The type of machine to run the job on
     runs-on: ubuntu-latest
 
     steps:
+        # Check-out repository under GitHub workspace
+        # https://github.com/actions/checkout
       - uses: actions/checkout@v2
-
-      - uses: php-actions/composer@v5
-
-      - name: PHPUnit Tests
-        uses: php-actions/phpunit@v2
+        # Step's name
+      - name: Setup PHP
+        # Action gives to setup the PHP environment to test application
+        # https://github.com/shivammathur/setup-php
+        uses: shivammathur/setup-php@v2
         with:
-          php_extensions: xdebug
-          bootstrap: vendor/autoload.php
-          configuration: tests/phpunit.xml
-          args: --coverage-text
+          # Specify the PHP version
+          php-version: '7.4'
+      - name: Install
+        # Install project
+        run: make install
+      - name: Run linter
+        # Run Linter
+        run: make lint
+        # Publish code coverage on Code Climate
+        # https://github.com/paambaati/codeclimate-action
+      - name: Run test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.6.0
+        # Add Code Climate secret key
         env:
-          XDEBUG_MODE: coverage
-          CC_TEST_REPORTER_ID: CODECLIMATE_COVERAGE_LVL_2
-  coverage:
-    needs: [ build-test ]
-    name: coverage
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-node@master
-      with:
-        node-version: '12'
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn build
-    - uses: paambaati/codeclimate-action@v2.2.4
-      env:
-        CC_TEST_REPORTER_ID: CODECLIMATE_COVERAGE_LVL_2
-      with:
-        coverageCommand: yarn coverage
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_COVERAGE_LVL_2 }}
+        with:
+          coverageCommand: make test-coverage
+          coverageLocations: ${{github.workplace}}/build/logs/clover.xml:clover
+          debug: true
