@@ -1,5 +1,5 @@
 # Name of workflow
-name: PHP CI
+name: PHP UNIT COVERAGE
 
 # Trigger the workflow on push or pull request
 on:
