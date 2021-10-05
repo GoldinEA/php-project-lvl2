@@ -5,7 +5,11 @@ validate:
 	composer validate
 
 lint:
-	composer run-script phpcs -- --standard=PSR12 src bin
+	composer exec --verbose phpcs -- --standard=PSR12 src tests
+	composer exec --verbose phpstan -- --level=8 analyse src tests
+
+lint-fix:
+	composer exec --verbose phpcbf -- --standard=PSR12 src tests
 
 docker-lint:
 	docker run --rm -v $(PWD):/app -w /app composer:latest make lint
