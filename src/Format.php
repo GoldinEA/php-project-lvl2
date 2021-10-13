@@ -59,8 +59,11 @@ function defaultFormat(array $tree, int $step = 1): string
             }
         }
     }, $tree);
-
-    return '{' . $spaces . implode($spaces, $formattedTree) . $spaces . '}';
+    $clearDataDefault = array_filter($formattedTree);
+    $resize = array_map(function ($elementTree) {
+        return substr($elementTree, -1) === PHP_EOL ? substr($elementTree, 0, strlen($elementTree) - 1) : $elementTree;
+    }, $clearDataDefault);
+    return '{' . $spaces . implode($spaces, $resize) . $spaces . '}';
 }
 
 function jsonFormat(array $tree, int $step = 1): string
@@ -98,7 +101,11 @@ function jsonFormat(array $tree, int $step = 1): string
             }
         }
     }, $tree);
-    return '{' . $spaces . implode($spaces, $formattedTree) . $spaces . '}';
+    $clearDataJson = array_filter($formattedTree);
+    $resize = array_map(function ($elementTree) {
+        return substr($elementTree, -1) === PHP_EOL ? substr($elementTree, 0, strlen($elementTree) - 1) : $elementTree;
+    }, $clearDataJson);
+    return '{' . $spaces . implode($spaces, $resize) . $spaces . '}';
 }
 
 function plainFormat(array $tree, int $step = 1, array $structureName = []): string
@@ -119,6 +126,7 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
                     : convertToString($treeElement['value_deleted']);
                 return "Property '{$name}' was updated. From {$strDeleted} to '{$strAdded}'";
             } else {
+                $spaces = $step === 1 ? '' : PHP_EOL;
                 return "Property '{$name}' was {$status} with value: [complex value]"
                     . PHP_EOL
                     . plainFormat($treeElement['value'], $step + 1, $structureName);
@@ -137,7 +145,10 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
         }
     }, $tree);
     $clearDataPlain = array_filter($formattedTree);
-    return implode(PHP_EOL, $clearDataPlain);
+    $resize = array_map(function ($elementTree) {
+        return substr($elementTree, -1) === PHP_EOL ? substr($elementTree, 0, strlen($elementTree) - 1) : $elementTree;
+    }, $clearDataPlain);
+    return implode(PHP_EOL, $resize);
 }
 
 function getPlainStatus(string $typeElement): string
