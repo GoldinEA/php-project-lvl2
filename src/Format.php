@@ -5,15 +5,6 @@ namespace Differ\Format;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
-function diffHandler(array $diff, string $char): array
-{
-    $result = [];
-    foreach ($diff as $key => $item) {
-        $result["{$char} $key"] = $item;
-    }
-    return $result;
-}
-
 function createResult(array $diff, string $format): string
 {
     if (empty($format) || $format === 'default') {
@@ -54,13 +45,14 @@ function defaultFormat(array $tree, int $step = 1): string
             switch ($treeElement['type']) {
                 case 'changed':
                     return createString(
-                            $treeElement['name'],
-                            convertToString($treeElement['value_deleted']),
-                            $step,
-                            '-'
-                        ) . $spaces .
+                        $treeElement['name'],
+                        convertToString($treeElement['value_deleted']),
+                        $step,
+                        '-'
+                    )
+                        . $spaces .
                         createString($treeElement['name'], convertToString($treeElement['value_added']), $step, '+');
-                case 'deleted' || 'added':
+                case 'deleted' || 'added' || 'no_change':
                     $char = createChar($treeElement['type']);
                     return createString(
                         $treeElement['name'],
@@ -71,11 +63,11 @@ function defaultFormat(array $tree, int $step = 1): string
             }
         }
     }, $tree);
-    $clearData = resize($formattedTree);
+    $clearData = clearResult($formattedTree);
     return '{' . $spaces . implode($spaces, $clearData) . $spaces . '}';
 }
 
-function resize(array $dataDefault): array
+function clearResult(array $dataDefault): array
 {
     $clearData = array_filter($dataDefault);
     return array_map(function ($elementTree) {
@@ -110,33 +102,49 @@ function jsonFormat(array $tree, int $step = 1): string
             if ($treeElement['multivalued'] === true) {
                 $strAdded = is_array($treeElement['value_added']) ? jsonFormat($treeElement['value_added'], $step + 1) : convertToString($treeElement['value_added']);
                 $strDeleted = is_array($treeElement['value_deleted']) ? jsonFormat($treeElement['value_deleted'], $step + 1) : convertToString($treeElement['value_deleted']);
-                return str_repeat(" ", ($multiplicator * $step) - 2) . '"-' . $treeElement['name'] . '":' . $strDeleted . $spaces
-                    . str_repeat(" ", ($multiplicator * $step) - 2) . '"+' . $treeElement['name'] . '":' . $strAdded;
+                return createStringJson($treeElement['name'], $strDeleted, $step + 1, '-') . $spaces
+                    . createStringJson($treeElement['name'], $strAdded, $step + 1, '+');
             } else {
-                if ($treeElement['type'] === 'deleted') {
-                    return str_repeat(" ", ($multiplicator * $step) - 2) . '"-' . $treeElement['name'] . '":' . jsonFormat($treeElement['value'], $step + 1);
-                } elseif ($treeElement['type'] === 'added') {
-                    return str_repeat(" ", ($multiplicator * $step) - 2) . '"+' . $treeElement['name'] . '":' . jsonFormat($treeElement['value'], $step + 1);
-                } else {
-                    return str_repeat(" ", $multiplicator * $step) . '"' . $treeElement['name'] . '":' . jsonFormat($treeElement['value'], $step + 1);
-                }
+                $char = createChar($treeElement['type']);
+                return createStringJson(
+                    $treeElement['name'],
+                    jsonFormat($treeElement['value'], $step + 1),
+                    $step,
+                    $char
+                );
             }
         } else {
             switch ($treeElement['type']) {
-                case 'no_change':
-                    return str_repeat(" ", $multiplicator * $step) . '"' . $treeElement['name'] . '":' . convertToString($treeElement['value']);
                 case 'changed':
-                    return str_repeat(" ", ($multiplicator * $step) - 2) . '"-' . $treeElement['name'] . '":' . convertToString($treeElement['value_deleted']) . $spaces
-                        . str_repeat(" ", ($multiplicator * $step) - 2) . '"+' . $treeElement['name'] . '":' . convertToString($treeElement['value_added']);
-                case 'deleted':
-                    return str_repeat(" ", ($multiplicator * $step) - 2) . '"-' . $treeElement['name'] . '":' . convertToString($treeElement['value']);
-                case 'added':
-                    return str_repeat(" ", ($multiplicator * $step) - 2) . '"+' . $treeElement['name'] . '":' . convertToString($treeElement['value']);
+                    return createStringJson(
+                            $treeElement['name'],
+                            convertToString($treeElement['value_deleted']),
+                            $step,
+                            '-'
+                        )
+                        . $spaces .
+                        createStringJson($treeElement['name'], convertToString($treeElement['value_added']), $step, '+');
+                case 'deleted' || 'added' || 'no_change':
+                    $char = createChar($treeElement['type']);
+                    return createStringJson(
+                        $treeElement['name'],
+                        convertToString($treeElement['value']),
+                        $step,
+                        $char
+                    );
             }
         }
     }, $tree);
-    $clearData = resize($formattedTree);
+    $clearData = clearResult($formattedTree);
     return '{' . $spaces . implode($spaces, $clearData) . $spaces . '}';
+}
+
+function createStringJson(string $name, string $value, int $step, string $char = ''): string
+{
+    $multiplicator = $step === 1 ? 4 : 2;
+    $name = $char === '' ? "$name: " : "$char $name: ";
+    $repeat = $char === '' ? $multiplicator * $step : ($multiplicator * $step) - 2;
+    return str_repeat(" ", $repeat) . '"'. $name . '":' . $value;
 }
 
 function plainFormat(array $tree, int $step = 1, array $structureName = []): string
@@ -157,7 +165,6 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
                     : convertToString($treeElement['value_deleted']);
                 return "Property '{$name}' was updated. From {$strDeleted} to '{$strAdded}'";
             } else {
-                $spaces = $step === 1 ? '' : PHP_EOL;
                 return "Property '{$name}' was {$status} with value: [complex value]"
                     . PHP_EOL
                     . plainFormat($treeElement['value'], $step + 1, $structureName);
@@ -175,7 +182,7 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
             }
         }
     }, $tree);
-    $clearData = resize($formattedTree);
+    $clearData = clearResult($formattedTree);
     return implode(PHP_EOL, $clearData);
 }
 
