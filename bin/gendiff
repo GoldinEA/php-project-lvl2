@@ -4,7 +4,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
 
-use function Differ\Diff\genDiff;
+use function Differ\Differ\genDiff;
 
 $doc = <<<'DOCOPT'
 Generate diff

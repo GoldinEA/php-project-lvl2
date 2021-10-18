@@ -3,7 +3,7 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use function Differ\Diff\createTree;
+use function Differ\Differ\createTree;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

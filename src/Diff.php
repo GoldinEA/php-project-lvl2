@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Differ\Diff;
+namespace Differ\Differ;
 
 use Exception;
 use Symfony\Component\Yaml\Yaml;
