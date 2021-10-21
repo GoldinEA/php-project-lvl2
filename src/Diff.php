@@ -100,16 +100,16 @@ function createValueTree($dataValue)
 {
     if (is_array($dataValue)) {
         $keys = array_keys($dataValue);
-        $result = array_map(function ($key) use ($dataValue) {
+
+        return ['value' => array_map(function ($key) use ($dataValue) {
             if (is_array($dataValue[$key])) {
                 $child = createValueTree($dataValue[$key]);
                 return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => true, 'value' => $child['value']];
-            } else {
-                return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => $dataValue[$key]];
             }
-        }, $keys);
-        return ['value' => $result];
-    } else {
-        return ['value' => $dataValue];
+
+            return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => $dataValue[$key]];
+        }, $keys)];
     }
+
+    return ['value' => $dataValue];
 }
