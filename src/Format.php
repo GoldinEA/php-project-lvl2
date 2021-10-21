@@ -15,7 +15,6 @@ function createResult(array $diff, string $format): string
     return '';
 }
 
-
 function clearResult(array $dataDefault): array
 {
     $clearData = array_filter($dataDefault);

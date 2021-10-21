@@ -55,42 +55,57 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
     $keysFirst = array_keys($dataFirstFile);
     $keysLast = array_keys($dataLastFile);
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
+
     $result = array_map(function ($key) use ($dataFirstFile, $dataLastFile) {
-        if (array_key_exists($key, $dataFirstFile) && array_key_exists($key, $dataLastFile)) {
-            if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
-                $child = createTree($dataFirstFile[$key], $dataLastFile[$key]);
-                return ['name' => $key, 'type' => 'changed','multivalued' => false, 'multilevel' => true, 'value' => $child];
-            } else {
-                return $dataFirstFile[$key] === $dataLastFile[$key]
-                    ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change','multilevel' => false, 'value' => $dataLastFile[$key]]
-                    : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($dataLastFile[$key]) || is_array(createValueTree($dataFirstFile[$key])['value']),
-                        'value_added' => is_array($dataLastFile[$key])
-                            ? createValueTree($dataLastFile[$key])['value']
-                            : $dataLastFile[$key],
-                        'value_deleted' => is_array(createValueTree($dataFirstFile[$key]))
-                            ? createValueTree($dataFirstFile[$key])['value']
-                            : $dataFirstFile[$key]];
-            }
-        } else {
+        if (!array_key_exists($key, $dataFirstFile) || !array_key_exists($key, $dataLastFile)) {
             $valueFirstFile = array_key_exists($key, $dataFirstFile) ? createValueTree($dataFirstFile[$key]) : '';
             $valueLastFile = array_key_exists($key, $dataLastFile) ? createValueTree($dataLastFile[$key]) : '';
             return array_key_exists($key, $dataFirstFile)
-                ? ['name' => $key,'multivalued' => false, 'type' => 'deleted', 'value' => $valueFirstFile['value'], 'multilevel' => is_array($valueFirstFile['value'])]
-                : ['name' => $key,'multivalued' => false, 'type' => 'added', 'value' => $valueLastFile['value'], 'multilevel' => is_array($valueLastFile['value'])];
+                ? [
+                    'name' => $key,
+                    'multivalued' => false,
+                    'type' => 'deleted',
+                    'value' => $valueFirstFile['value'],
+                    'multilevel' => is_array($valueFirstFile['value'])
+                ]
+                : [
+                    'name' => $key,
+                    'multivalued' => false,
+                    'type' => 'added',
+                    'value' => $valueLastFile['value'],
+                    'multilevel' => is_array($valueLastFile['value'])
+                ];
         }
+
+        if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
+            $child = createTree($dataFirstFile[$key], $dataLastFile[$key]);
+            return ['name' => $key, 'type' => 'changed', 'multivalued' => false, 'multilevel' => true, 'value' => $child];
+        }
+
+        return $dataFirstFile[$key] === $dataLastFile[$key]
+            ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change', 'multilevel' => false, 'value' => $dataLastFile[$key]]
+            : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($dataLastFile[$key]) || is_array(createValueTree($dataFirstFile[$key])['value']),
+                'value_added' => is_array($dataLastFile[$key])
+                    ? createValueTree($dataLastFile[$key])['value']
+                    : $dataLastFile[$key],
+                'value_deleted' => is_array($dataFirstFile[$key])
+                    ? createValueTree($dataFirstFile[$key])['value']
+                    : $dataFirstFile[$key]];
     }, $allKeys);
+
     return array_values($result) ?? [];
 }
 
-function createValueTree($dataValue) {
+function createValueTree($dataValue)
+{
     if (is_array($dataValue)) {
         $keys = array_keys($dataValue);
         $result = array_map(function ($key) use ($dataValue) {
             if (is_array($dataValue[$key])) {
                 $child = createValueTree($dataValue[$key]);
-                return ['name' => $key, 'type' => 'no_change','multivalued' => false, 'multilevel' => true, 'value' => $child['value']];
+                return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => true, 'value' => $child['value']];
             } else {
-                return ['name' => $key, 'type' => 'no_change','multivalued' => false, 'multilevel' => false, 'value' => $dataValue[$key]];
+                return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => $dataValue[$key]];
             }
         }, $keys);
         return ['value' => $result];
