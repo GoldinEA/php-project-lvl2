@@ -5,7 +5,7 @@ namespace Differ\Differ;
 
 use Exception;
 use Symfony\Component\Yaml\Yaml;
-use function Differ\Format\createResult;
+use function Differ\Format\format;
 
 
 /**
@@ -16,7 +16,7 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format): stri
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
     $tree = createTree($dataFile1, $dataFile2);
-    return createResult($tree, $format);
+    return format($tree, $format);
 }
 
 
@@ -50,17 +50,17 @@ function getYamlInfo(string $pathToFile): array
     return Yaml::parseFile($pathToFile) ?? [];
 }
 
-function createTree(array $dataFirstFile, array $dataLastFile): array
+function createTree(array $data1, array $data2): array
 {
-    $keysFirst = array_keys($dataFirstFile);
-    $keysLast = array_keys($dataLastFile);
+    $keysFirst = array_keys($data1);
+    $keysLast = array_keys($data2);
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
 
-    $result = array_map(function ($key) use ($dataFirstFile, $dataLastFile) {
-        if (!array_key_exists($key, $dataFirstFile) || !array_key_exists($key, $dataLastFile)) {
-            $valueFirstFile = array_key_exists($key, $dataFirstFile) ? createValueTree($dataFirstFile[$key]) : '';
-            $valueLastFile = array_key_exists($key, $dataLastFile) ? createValueTree($dataLastFile[$key]) : '';
-            return array_key_exists($key, $dataFirstFile)
+    $result = array_map(function ($key) use ($data1, $data2) {
+        if (!array_key_exists($key, $data1) || !array_key_exists($key, $data2)) {
+            $valueFirstFile = array_key_exists($key, $data1) ? createValueTree($data1[$key]) : '';
+            $valueLastFile = array_key_exists($key, $data2) ? createValueTree($data2[$key]) : '';
+            return array_key_exists($key, $data1)
                 ? [
                     'name' => $key,
                     'multivalued' => false,
@@ -77,20 +77,20 @@ function createTree(array $dataFirstFile, array $dataLastFile): array
                 ];
         }
 
-        if (is_array($dataLastFile[$key]) && is_array($dataFirstFile[$key])) {
-            $child = createTree($dataFirstFile[$key], $dataLastFile[$key]);
+        if (is_array($data2[$key]) && is_array($data1[$key])) {
+            $child = createTree($data1[$key], $data2[$key]);
             return ['name' => $key, 'type' => 'changed', 'multivalued' => false, 'multilevel' => true, 'value' => $child];
         }
 
-        return $dataFirstFile[$key] === $dataLastFile[$key]
-            ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change', 'multilevel' => false, 'value' => $dataLastFile[$key]]
-            : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($dataLastFile[$key]) || is_array(createValueTree($dataFirstFile[$key])['value']),
-                'value_added' => is_array($dataLastFile[$key])
-                    ? createValueTree($dataLastFile[$key])['value']
-                    : $dataLastFile[$key],
-                'value_deleted' => is_array($dataFirstFile[$key])
-                    ? createValueTree($dataFirstFile[$key])['value']
-                    : $dataFirstFile[$key]];
+        return $data1[$key] === $data2[$key]
+            ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change', 'multilevel' => false, 'value' => $data2[$key]]
+            : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($data2[$key]) || is_array(createValueTree($data1[$key])['value']),
+                'value_added' => is_array($data2[$key])
+                    ? createValueTree($data2[$key])['value']
+                    : $data2[$key],
+                'value_deleted' => is_array($data1[$key])
+                    ? createValueTree($data1[$key])['value']
+                    : $data1[$key]];
     }, $allKeys);
 
     return array_values($result) ?? [];

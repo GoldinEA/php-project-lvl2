@@ -5,7 +5,7 @@ namespace Differ\Format;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
-function createResult(array $diff, string $format): string
+function format(array $diff, string $format): string
 {
     if (empty($format) || $format === 'default' || $format === 'json') {
         return formatText($diff, $format);
@@ -14,7 +14,8 @@ function createResult(array $diff, string $format): string
     if ($format === 'plain') {
         return plainFormat($diff, 1);
     }
-    return '';
+
+    throw new \Exception("$format is not found.");;
 }
 
 function clearResult(array $dataDefault): array
@@ -56,7 +57,7 @@ function formatText(array $tree, string $type, int $step = 1): string
             return createString($treeElement['name'], $strDeleted, $step + 1, '-', $type) . $spaces
                 . createString($treeElement['name'], $strAdded, $step + 1, '+', $type);
         }
-        
+
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true) {
             $char = createChar($treeElement['type']);
             return createString(
