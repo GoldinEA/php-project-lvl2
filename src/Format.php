@@ -3,8 +3,13 @@ declare(strict_types=1);
 
 namespace Differ\Format;
 
+use Exception;
+
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
+/**
+ * @throws Exception
+ */
 function format(array $diff, string $format): string
 {
     if (empty($format) || $format === 'default' || $format === 'json') {
@@ -12,10 +17,10 @@ function format(array $diff, string $format): string
     }
 
     if ($format === 'plain') {
-        return plainFormat($diff, 1);
+        return plainFormat($diff);
     }
 
-    throw new \Exception("$format is not found.");;
+    throw new Exception("$format is not found.");
 }
 
 function clearResult(array $dataDefault): array
@@ -72,12 +77,12 @@ function formatText(array $tree, string $type, int $step = 1): string
         switch ($treeElement['type']) {
             case 'changed':
                 return createString(
-                        $treeElement['name'],
-                        convertToString($treeElement['value_deleted']),
-                        $step,
-                        '-',
-                        $type
-                    )
+                    $treeElement['name'],
+                    convertToString($treeElement['value_deleted']),
+                    $step,
+                    '-',
+                    $type
+                )
                     . $spaces .
                     createString($treeElement['name'], convertToString($treeElement['value_added']), $step, '+', $type);
             case 'deleted' || 'added' || 'no_change':
@@ -90,7 +95,6 @@ function formatText(array $tree, string $type, int $step = 1): string
                     $type
                 );
         }
-
     }, $tree);
     $clearData = clearResult($formattedTree);
     return '{' . $spaces . implode($spaces, $clearData) . $spaces . '}';
@@ -113,11 +117,11 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
             $strDeleted = is_array($treeElement['value_deleted'])
                 ? "[complex value]"
                 : convertToString($treeElement['value_deleted']);
-            return "Property '{$name}' was updated. From {$strDeleted} to '{$strAdded}'";
+            return "Property '$name' was updated. From $strDeleted to '$strAdded'";
         }
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true) {
-            return "Property '{$name}' was {$status} with value: [complex value]"
+            return "Property '$name' was $status with value: [complex value]"
                 . PHP_EOL
                 . plainFormat($treeElement['value'], $step + 1, $structureName);
         }
@@ -126,13 +130,12 @@ function plainFormat(array $tree, int $step = 1, array $structureName = []): str
             case 'changed':
                 $deleted = convertToString($treeElement['value_deleted']);
                 $added = convertToString($treeElement['value_added']);
-                return "Property '{$name}' was {$status}. From '{$deleted}' to '{$added}'";
+                return "Property '$name' was $status. From '$deleted' to '$added'";
             case 'deleted':
-                return "Property '{$name}' was {$status}.";
+                return "Property '$name' was $status.";
             case 'added':
-                return "Property '{$name}' was {$status} with value: " . convertToString($treeElement['value']);
+                return "Property '$name' was $status with value: " . convertToString($treeElement['value']);
         }
-
     }, $tree);
     $clearData = clearResult($formattedTree);
     return implode(PHP_EOL, $clearData);

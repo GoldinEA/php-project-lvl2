@@ -20,7 +20,7 @@
     },
     "autoload": {
         "files": [
-            "src/Diff.php",
+            "src/Differ.php",
             "src/Format.php"
         ]
     },
@@ -34,7 +34,7 @@
     },
     "config": {
         "platform": {
-            "php": "^8.0.0"
+            "php": "8.0.0"
         }
     }
 }

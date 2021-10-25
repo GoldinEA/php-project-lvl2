@@ -4,9 +4,8 @@ declare(strict_types=1);
 namespace Differ\Differ;
 
 use Exception;
-use Symfony\Component\Yaml\Yaml;
 use function Differ\Format\format;
-
+use function Differ\Parsers\getFileData;
 
 /**
  * @throws Exception Стандартное исключение.
@@ -17,37 +16,6 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format): stri
     $dataFile2 = getFileData($pathToFile2);
     $tree = createTree($dataFile1, $dataFile2);
     return format($tree, $format);
-}
-
-
-/**
- * @throws Exception Стандартное исключение.
- */
-function getFileData(string $pathToFile): array
-{
-    if (!file_exists($pathToFile)) {
-        throw new Exception("File $pathToFile is not found.");
-    }
-
-    $path = new \SplFileInfo($pathToFile);
-    $format = $path->getExtension();
-
-    return match ($format) {
-        'yaml', 'yml' => getYamlInfo($pathToFile),
-        'json' => getJsonInfo($pathToFile),
-        default => throw new Exception("Format file $format not found."),
-    };
-
-}
-
-function getJsonInfo(string $pathToFile): array
-{
-    return json_decode(file_get_contents($pathToFile), true) ?? [];
-}
-
-function getYamlInfo(string $pathToFile): array
-{
-    return Yaml::parseFile($pathToFile) ?? [];
 }
 
 function createTree(array $data1, array $data2): array
@@ -96,7 +64,7 @@ function createTree(array $data1, array $data2): array
     return array_values($result) ?? [];
 }
 
-function createValueTree($dataValue)
+function createValueTree($dataValue): array
 {
     if (is_array($dataValue)) {
         $keys = array_keys($dataValue);
