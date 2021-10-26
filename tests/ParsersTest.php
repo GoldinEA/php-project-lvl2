@@ -17,13 +17,13 @@ class ParsersTest extends TestCase
 
     public function testYaml()
     {
-        $fileData = getFileData('../tests/fixures/file1.yml');
+        $fileData = getFileData('fixures/file1.yml');
         $this->assertEquals($this->testData, $fileData);
     }
 
     public function testJson()
     {
-        $fileData = getFileData('../tests/fixures/file3.json');
+        $fileData = getFileData('fixures/file3.json');
         $this->assertEquals($this->testData, $fileData);
     }
 }
