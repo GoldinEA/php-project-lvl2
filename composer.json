@@ -21,7 +21,8 @@
     "autoload": {
         "files": [
             "src/Differ.php",
-            "src/Format.php"
+            "src/Format.php",
+            "src/Parsers.php"
         ]
     },
     "require-dev": {
