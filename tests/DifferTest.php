@@ -7,7 +7,7 @@ use function Differ\Differ\createTree;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-class DiffTest extends TestCase
+class DifferTest extends TestCase
 {
     private $dataFirstFile = [
         'host' => 'hexlet.io',
