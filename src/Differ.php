@@ -10,7 +10,7 @@ use function Differ\Parsers\getFileData;
 /**
  * @throws Exception Стандартное исключение.
  */
-function genDiff(string $pathToFile1, string $pathToFile2, string $format): string
+function genDiff(string $pathToFile1, string $pathToFile2, string $format = ''): string
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
