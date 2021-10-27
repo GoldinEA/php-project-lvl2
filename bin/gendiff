@@ -30,4 +30,4 @@ $params = array(
 
 $args = Docopt::handle($doc);
 
-echo genDiff('../' . $args->args['<firstFile>'], '../' . $args->args['<secondFile>'], $args->args['--format']);
+echo genDiff('..' . DIRECTORY_SEPARATOR . $args->args['<firstFile>'], '..' . DIRECTORY_SEPARATOR . $args->args['<secondFile>'], $args->args['--format']);
