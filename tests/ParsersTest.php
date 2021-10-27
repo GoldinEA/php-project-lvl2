@@ -17,13 +17,15 @@ class ParsersTest extends TestCase
 
     public function testYaml()
     {
-        $fileData = getFileData('fixures' . DIRECTORY_SEPARATOR . 'file1.yml');
+        $path = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.yml');
+        $fileData = getFileData($path);
         $this->assertEquals($this->testData, $fileData);
     }
 
     public function testJson()
     {
-        $fileData = getFileData('fixures' . DIRECTORY_SEPARATOR . 'file3.json');
+        $path = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file3.json');
+        $fileData = getFileData($path);
         $this->assertEquals($this->testData, $fileData);
     }
 }
