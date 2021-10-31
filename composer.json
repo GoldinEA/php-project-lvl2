@@ -22,7 +22,10 @@
         "files": [
             "src/Differ.php",
             "src/Format.php",
-            "src/Parsers.php"
+            "src/Parsers.php",
+            "src/Formatters/Json.php",
+            "src/Formatters/Plain.php",
+            "src/Formatters/Stylish.php"
         ]
     },
     "require-dev": {
