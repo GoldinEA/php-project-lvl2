@@ -13,11 +13,11 @@ const BOOL_ARRAY = [true => 'true', false => 'false'];
 function format(array $diff, string $format): string
 {
     if (empty($format) || $format === 'default') {
-        return \Differ\Formatters\Stylish\format($diff, $format);
+        return \Differ\Formatters\Stylish\format($diff);
     }
 
     if ($format === 'json') {
-        return \Differ\Formatters\Json\format($diff, $format);
+        return json_encode(\Differ\Formatters\Json\format($diff));
     }
 
     if ($format === 'plain') {
