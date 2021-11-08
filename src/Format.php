@@ -12,16 +12,16 @@ const BOOL_ARRAY = [true => 'true', false => 'false'];
  */
 function format(array $diff, string $format): string
 {
-    if (empty($format) || $format === 'default') {
-        return \Differ\Formatters\Stylish\format($diff);
+    if (empty($format) || $format === 'stylish') {
+        return \Differ\Formatters\Stylish\create($diff);
     }
 
     if ($format === 'json') {
-        return json_encode(\Differ\Formatters\Json\format($diff));
+        return json_encode(\Differ\Formatters\Json\create($diff));
     }
 
     if ($format === 'plain') {
-        return \Differ\Formatters\Plain\format($diff);
+        return \Differ\Formatters\Plain\create($diff);
     }
 
     throw new Exception("$format is not found.");

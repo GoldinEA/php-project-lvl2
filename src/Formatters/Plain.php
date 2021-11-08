@@ -3,7 +3,7 @@ namespace Differ\Formatters\Plain;
 
 use const Differ\Format\BOOL_ARRAY;
 
-function format(array $tree, int $step = 1, array $structureName = []): string
+function create(array $tree, int $step = 1, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($step, $structureName) {
         $structureName[$step] = $treeElement['name'];
@@ -25,7 +25,7 @@ function format(array $tree, int $step = 1, array $structureName = []): string
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true) {
             return "Property '$name' was $status with value: [complex value]"
                 . PHP_EOL
-                . format($treeElement['value'], $step + 1, $structureName);
+                . create($treeElement['value'], $step + 1, $structureName);
         }
 
         switch ($treeElement['type']) {

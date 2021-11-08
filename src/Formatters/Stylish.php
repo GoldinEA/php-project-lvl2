@@ -35,7 +35,7 @@ function convertToString(mixed $value): string
         default => (string)$value,
     };
 }
-function format(array $tree, int $step = 1): string
+function create(array $tree, int $step = 1): string
 {
     $multiplicator = $step === 1 ? 0 : 2;
     $spaces = "\r" . PHP_EOL . str_repeat(" ", $multiplicator * $step);
@@ -43,10 +43,10 @@ function format(array $tree, int $step = 1): string
         if ($treeElement['multilevel'] === true) {
             if ($treeElement['multivalued'] === true) {
                 $strAdded = is_array($treeElement['value_added'])
-                    ? format($treeElement['value_added'], $step + 1)
+                    ? create($treeElement['value_added'], $step + 1)
                     : convertToString($treeElement['value_added']);
                 $strDeleted = is_array($treeElement['value_deleted'])
-                    ? format($treeElement['value_deleted'], $step + 1)
+                    ? create($treeElement['value_deleted'], $step + 1)
                     : convertToString($treeElement['value_deleted']);
                 return createString($treeElement['name'], $strDeleted, $step + 1, '-') . $spaces
                     . createString($treeElement['name'], $strAdded, $step + 1, '+');
@@ -54,7 +54,7 @@ function format(array $tree, int $step = 1): string
                 $char = createChar($treeElement['type']);
                 return createString(
                     $treeElement['name'],
-                    format($treeElement['value'], $step + 1),
+                    create($treeElement['value'], $step + 1),
                     $step,
                     $char
                 );
