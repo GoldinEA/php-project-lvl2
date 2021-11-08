@@ -38,7 +38,7 @@ function convertToString(mixed $value): string
 function create(array $tree, int $step = 1): string
 {
     $multiplicator = $step === 1 ? 0 : 2;
-    $spaces = "\r" . PHP_EOL . str_repeat(" ", $multiplicator * $step);
+    $spaces = PHP_EOL . str_repeat(" ", $multiplicator * $step);
     $formattedTree = array_map(function ($treeElement) use ($step, $spaces) {
         if ($treeElement['multilevel'] === true) {
             if ($treeElement['multivalued'] === true) {
