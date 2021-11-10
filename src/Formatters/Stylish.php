@@ -68,11 +68,11 @@ function create(array $tree, int $step = 1): string
         switch ($treeElement['type']) {
             case 'changed':
                 return createString(
-                        $treeElement['name'],
-                        convertToString($treeElement['value_deleted']),
-                        $step,
-                        '-'
-                    )
+                    $treeElement['name'],
+                    convertToString($treeElement['value_deleted']),
+                    $step,
+                    '-'
+                )
                     . $spaces .
                     createString($treeElement['name'], convertToString($treeElement['value_added']), $step, '+');
             case 'deleted' || 'added' || 'no_change':
@@ -84,7 +84,6 @@ function create(array $tree, int $step = 1): string
                     $char
                 );
         }
-
     }, $tree);
     $clearData = clearResult($formattedTree);
     return '{' . $spaces . implode($spaces, $clearData) . $spaces . '}';
