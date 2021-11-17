@@ -13,12 +13,12 @@ function create(array $tree, int $step = 1, array $structureName = []): string
         $status = getPlainStatus($treeElement['type']);
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
-            $strAdded = is_array($treeElement['value_added'])
+            $strAdded = is_array($treeElement['value_last_file'])
                 ? "[complex value]"
-                : convertToString($treeElement['value_added']);
-            $strDeleted = is_array($treeElement['value_deleted'])
+                : convertToString($treeElement['value_last_file']);
+            $strDeleted = is_array($treeElement['value_first_file'])
                 ? "[complex value]"
-                : convertToString($treeElement['value_deleted']);
+                : convertToString($treeElement['value_first_file']);
             return "Property '$name' was updated. From $strDeleted to '$strAdded'";
         }
 
@@ -30,8 +30,8 @@ function create(array $tree, int $step = 1, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                $deleted = convertToString($treeElement['value_deleted']);
-                $added = convertToString($treeElement['value_added']);
+                $deleted = convertToString($treeElement['value_first_file']);
+                $added = convertToString($treeElement['value_last_file']);
                 return "Property '$name' was $status. From '$deleted' to '$added'";
             case 'deleted':
                 return "Property '$name' was $status.";

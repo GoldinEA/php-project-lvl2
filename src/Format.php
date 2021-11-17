@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Differ\Format;
 
 use Exception;
+use function Differ\Formatters\Plain\create;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
@@ -12,7 +13,7 @@ const BOOL_ARRAY = [true => 'true', false => 'false'];
  */
 function format(array $diff, string $format): string
 {
-    if (empty($format) || $format === 'stylish') {
+    if ($format === 'stylish') {
         return \Differ\Formatters\Stylish\create($diff);
     }
 
@@ -21,7 +22,7 @@ function format(array $diff, string $format): string
     }
 
     if ($format === 'plain') {
-        return \Differ\Formatters\Plain\create($diff);
+        return create($diff);
     }
 
     throw new Exception("$format is not found.");

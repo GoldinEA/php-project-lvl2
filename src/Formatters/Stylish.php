@@ -45,12 +45,12 @@ function create(array $tree, int $step = 1): string
     $formattedTree = array_map(function ($treeElement) use ($step, $spaces) {
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
-            $strAdded = is_array($treeElement['value_added'])
-                ? create($treeElement['value_added'], $step + 1)
-                : convertToString($treeElement['value_added']);
-            $strDeleted = is_array($treeElement['value_deleted'])
-                ? create($treeElement['value_deleted'], $step + 1)
-                : convertToString($treeElement['value_deleted']);
+            $strAdded = is_array($treeElement['value_last_file'])
+                ? create($treeElement['value_last_file'], $step + 1)
+                : convertToString($treeElement['value_last_file']);
+            $strDeleted = is_array($treeElement['value_first_file'])
+                ? create($treeElement['value_first_file'], $step + 1)
+                : convertToString($treeElement['value_first_file']);
             return createString($treeElement['name'], $strDeleted, $step + 1, '-') . $spaces
                 . createString($treeElement['name'], $strAdded, $step + 1, '+');
         }
@@ -69,12 +69,12 @@ function create(array $tree, int $step = 1): string
             case 'changed':
                 return createString(
                     $treeElement['name'],
-                    convertToString($treeElement['value_deleted']),
+                    convertToString($treeElement['value_first_file']),
                     $step,
                     '-'
                 )
-                    . $spaces .
-                    createString($treeElement['name'], convertToString($treeElement['value_added']), $step, '+');
+                    . $spaces
+                    . createString($treeElement['name'], convertToString($treeElement['value_last_file']), $step, '+');
             case 'deleted' || 'added' || 'no_change':
                 $char = createChar($treeElement['type']);
                 return createString(

@@ -9,8 +9,10 @@ use function Differ\Parsers\getFileData;
 
 /**
  * @throws Exception Стандартное исключение.
+ * TODO протестировать эту функцию.
  */
-function genDiff(string $pathToFile1, string $pathToFile2, string $format = ''): string
+
+function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'stylish'): string
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
@@ -23,7 +25,7 @@ function createTree(array $data1, array $data2): array
     $keysFirst = array_keys($data1);
     $keysLast = array_keys($data2);
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
-
+    sort($allKeys);
     $result = array_map(function ($key) use ($data1, $data2) {
         if (!array_key_exists($key, $data1) || !array_key_exists($key, $data2)) {
             $valueFirstFile = array_key_exists($key, $data1) ? createValueTree($data1[$key]) : '';
@@ -53,10 +55,10 @@ function createTree(array $data1, array $data2): array
         return $data1[$key] === $data2[$key]
             ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change', 'multilevel' => false, 'value' => $data2[$key]]
             : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($data2[$key]) || is_array(createValueTree($data1[$key])['value']),
-                'value_added' => is_array($data2[$key])
+                'value_last_file' => is_array($data2[$key])
                     ? createValueTree($data2[$key])['value']
                     : $data2[$key],
-                'value_deleted' => is_array($data1[$key])
+                'value_first_file' => is_array($data1[$key])
                     ? createValueTree($data1[$key])['value']
                     : $data1[$key]];
     }, $allKeys);

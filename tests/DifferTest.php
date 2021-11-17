@@ -4,25 +4,26 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use function Differ\Differ\createTree;
+use function Differ\Differ\genDiff;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 class DifferTest extends TestCase
 {
-    private $dataFirstFile = [
+    private array $dataFirstFile = [
         'host' => 'hexlet.io',
         'timeout' => 50,
         'proxy' => '123.234.53.22',
         'follow' => false
     ];
 
-    private $dataLastFile = [
+    private array $dataLastFile = [
         'host' => 'hexlet.io',
         'timeout' => 20,
         'verbose' => true
     ];
 
-    private $dataLastFileMultilevel = [
+    private array $dataLastFileMultilevel = [
         'common' => [
             'follow' => false,
             'setting1' => 'Value 1',
@@ -54,7 +55,7 @@ class DifferTest extends TestCase
         ],
     ];
 
-    private $dataFirstFileMultilevel = [
+    private array $dataFirstFileMultilevel = [
         "common" => [
             "setting1" => "Value 1",
             "setting2" => 200,
@@ -81,12 +82,57 @@ class DifferTest extends TestCase
         ]
     ];
 
+    private string $testGendiff = '{
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+            key5: value5
+        }
+        setting6: {
+            doge: {
+              - wow: 
+              + wow: so much
+            }
+            key: value
+          + ops: vops
+        }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+            key: value
+        }
+      + nest: str
+    }
+  - group2: {
+        abc: 12345
+        deep: {
+            id: 45
+        }
+    }
+  + group3: {
+        deep: {
+            id: {
+                number: 45
+            }
+        }
+        fee: 100500
+    }
+}';
+
 
     public function testCreateTree()
     {
         $expected = [
             ['name' => 'host', 'type' => 'no_change', 'value' => 'hexlet.io', 'multivalued' => false, 'multilevel' => false],
-            ['name' => 'timeout', 'type' => 'changed', 'value_added' => 20, 'value_deleted' => 50, 'multivalued' => true, 'multilevel' => false],
+            ['name' => 'timeout', 'type' => 'changed', 'value_last_file' => 20, 'value_first_file' => 50, 'multivalued' => true, 'multilevel' => false],
             ['name' => 'proxy', 'type' => 'deleted', 'value' => '123.234.53.22', 'multilevel' => false, 'multivalued' => false],
             ['name' => 'follow', 'type' => 'deleted', 'value' => false, 'multilevel' => false, 'multivalued' => false],
             ['name' => 'verbose', 'type' => 'added', 'value' => true, 'multilevel' => false, 'multivalued' => false],
@@ -122,8 +168,8 @@ class DifferTest extends TestCase
                         [
                             'name' => 'setting3',
                             'type' => 'changed',
-                            'value_added' => NULL,
-                            'value_deleted' => true,
+                            'value_last_file' => null,
+                            'value_first_file' => true,
                             'multilevel' => false,
                             'multivalued' => true
                         ],
@@ -149,8 +195,8 @@ class DifferTest extends TestCase
                                                 [
                                                     'name' => 'wow',
                                                     'type' => 'changed',
-                                                    'value_added' => 'so much',
-                                                    'value_deleted' => '',
+                                                    'value_last_file' => 'so much',
+                                                    'value_first_file' => '',
                                                     'multilevel' => false,
                                                     'multivalued' => true
 
@@ -211,8 +257,8 @@ class DifferTest extends TestCase
                         [
                             'name' => 'baz',
                             'type' => 'changed',
-                            'value_added' => 'bars',
-                            'value_deleted' => 'bas',
+                            'value_last_file' => 'bars',
+                            'value_first_file' => 'bas',
                             'multilevel' => false,
                             'multivalued' => true
                         ],
@@ -226,8 +272,8 @@ class DifferTest extends TestCase
                         [
                             'name' => 'nest',
                             'type' => 'changed',
-                            'value_added' => 'str',
-                            'value_deleted' =>
+                            'value_last_file' => 'str',
+                            'value_first_file' =>
                                 [
                                     [
                                         'name' => 'key',
@@ -321,5 +367,14 @@ class DifferTest extends TestCase
 
         $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
         $this->assertEquals($expected, $tree);
+    }
+
+    public function testGendiff()
+    {
+        $result = genDiff(
+            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file.json',
+            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file1.json'
+        );
+        $this->assertEquals($this->testGendiff, $result);
     }
 }
