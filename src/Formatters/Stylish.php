@@ -12,12 +12,9 @@ function clearResult(array $dataDefault): array
     }, $clearData);
 }
 
-function createString(string $name, string $value, int $step, string $char = ''): string
+function createString(string $name, string $value, int $step, string $char): string
 {
-    $multiplicator = $step === 1 ? 4 : 2;
-    $name = $char === '' ? "$name: " : "$char $name: ";
-    $repeat = $char === '' ? $multiplicator * $step : ($multiplicator * $step) - 2;
-    return str_repeat(" ", $repeat) . $name . $value;
+    return substr(str_repeat("    ", $step), 2) . "$char $name: " . $value;
 }
 
 function createChar(string $type): string
@@ -25,7 +22,7 @@ function createChar(string $type): string
     return match ($type) {
         'deleted' => '-',
         'added' => '+',
-        default => ''
+        default => ' '
     };
 }
 
@@ -40,8 +37,7 @@ function convertToString(mixed $value): string
 
 function create(array $tree, int $step = 1): string
 {
-    $multiplicator = $step === 1 ? 0 : 2;
-    $spaces = PHP_EOL . str_repeat(" ", $multiplicator * $step);
+    $spaces = PHP_EOL . str_repeat("    ", $step);
     $formattedTree = array_map(function ($treeElement) use ($step, $spaces) {
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
@@ -51,8 +47,8 @@ function create(array $tree, int $step = 1): string
             $strDeleted = is_array($treeElement['value_first_file'])
                 ? create($treeElement['value_first_file'], $step + 1)
                 : convertToString($treeElement['value_first_file']);
-            return createString($treeElement['name'], $strDeleted, $step + 1, '-') . $spaces
-                . createString($treeElement['name'], $strAdded, $step + 1, '+');
+            return createString($treeElement['name'], $strDeleted, $step, '-') . PHP_EOL
+                . createString($treeElement['name'], $strAdded, $step, '+');
         }
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true) {
@@ -73,7 +69,7 @@ function create(array $tree, int $step = 1): string
                     $step,
                     '-'
                 )
-                    . $spaces
+                    . PHP_EOL
                     . createString($treeElement['name'], convertToString($treeElement['value_last_file']), $step, '+');
             case 'deleted' || 'added' || 'no_change':
                 $char = createChar($treeElement['type']);
@@ -85,6 +81,6 @@ function create(array $tree, int $step = 1): string
                 );
         }
     }, $tree);
-    $clearData = clearResult($formattedTree);
-    return '{' . $spaces . implode($spaces, $clearData) . $spaces . '}';
+    $spacesFinal = $step === 1 ? '' : substr(str_repeat("    ", $step), 4);
+    return '{' . PHP_EOL . implode("\n", $formattedTree) . PHP_EOL  .$spacesFinal . '}';
 }
