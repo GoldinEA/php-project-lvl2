@@ -143,10 +143,10 @@ Property 'group3' was added with value: [complex value]";
     public function testCreateTree()
     {
         $expected = [
-            ['name' => 'host', 'type' => 'no_change', 'value' => 'hexlet.io', 'multivalued' => false, 'multilevel' => false],
-            ['name' => 'timeout', 'type' => 'changed', 'value_last_file' => 20, 'value_first_file' => 50, 'multivalued' => true, 'multilevel' => false],
-            ['name' => 'proxy', 'type' => 'deleted', 'value' => '123.234.53.22', 'multilevel' => false, 'multivalued' => false],
             ['name' => 'follow', 'type' => 'deleted', 'value' => false, 'multilevel' => false, 'multivalued' => false],
+            ['name' => 'host', 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => 'hexlet.io'],
+            ['name' => 'proxy', 'type' => 'deleted', 'value' => '123.234.53.22', 'multilevel' => false, 'multivalued' => false],
+            ['name' => 'timeout', 'type' => 'changed', 'value_last_file' => 20, 'value_first_file' => 50, 'multivalued' => true, 'multilevel' => false],
             ['name' => 'verbose', 'type' => 'added', 'value' => true, 'multilevel' => false, 'multivalued' => false],
         ];
 
@@ -163,6 +163,13 @@ Property 'group3' was added with value: [complex value]";
                 'multilevel' => true,
                 'value' =>
                     [
+                        [
+                            'name' => 'follow',
+                            'type' => 'added',
+                            'value' => false,
+                            'multilevel' => false,
+                            'multivalued' => false
+                        ],
                         [
                             'name' => 'setting1',
                             'type' => 'no_change',
@@ -184,54 +191,6 @@ Property 'group3' was added with value: [complex value]";
                             'value_first_file' => true,
                             'multilevel' => false,
                             'multivalued' => true
-                        ],
-                        [
-                            'name' => 'setting6',
-                            'type' => 'changed',
-                            'multilevel' => true,
-                            'value' =>
-                                [
-                                    [
-                                        'name' => 'key',
-                                        'type' => 'no_change',
-                                        'value' => 'value',
-                                        'multivalued' => false,
-                                        'multilevel' => false
-                                    ],
-                                    [
-                                        'name' => 'doge',
-                                        'type' => 'changed',
-                                        'multilevel' => true,
-                                        'value' =>
-                                            [
-                                                [
-                                                    'name' => 'wow',
-                                                    'type' => 'changed',
-                                                    'value_last_file' => 'so much',
-                                                    'value_first_file' => '',
-                                                    'multilevel' => false,
-                                                    'multivalued' => true
-
-                                                ],
-                                            ],
-                                        'multivalued' => false
-                                    ],
-                                    [
-                                        'name' => 'ops',
-                                        'type' => 'added',
-                                        'value' => 'vops',
-                                        'multilevel' => false,
-                                        'multivalued' => false
-                                    ],
-                                ],
-                            'multivalued' => false
-                        ],
-                        [
-                            'name' => 'follow',
-                            'type' => 'added',
-                            'value' => false,
-                            'multilevel' => false,
-                            'multivalued' => false
                         ],
                         [
                             'name' => 'setting4',
@@ -257,6 +216,50 @@ Property 'group3' was added with value: [complex value]";
                             'multilevel' => true,
                             'multivalued' => false
                         ],
+                        [
+                            'name' => 'setting6',
+                            'type' => 'changed',
+                            'multilevel' => true,
+                            'value' =>
+                                [
+                                    [
+                                        'name' => 'doge',
+                                        'type' => 'changed',
+                                        'multilevel' => true,
+                                        'value' =>
+                                            [
+                                                [
+                                                    'name' => 'wow',
+                                                    'type' => 'changed',
+                                                    'value_last_file' => 'so much',
+                                                    'value_first_file' => '',
+                                                    'multilevel' => false,
+                                                    'multivalued' => true
+
+                                                ],
+                                            ],
+                                        'multivalued' => false
+                                    ],
+                                    [
+                                        'name' => 'key',
+                                        'type' => 'no_change',
+                                        'value' => 'value',
+                                        'multivalued' => false,
+                                        'multilevel' => false
+                                    ],
+
+                                    [
+                                        'name' => 'ops',
+                                        'type' => 'added',
+                                        'value' => 'vops',
+                                        'multilevel' => false,
+                                        'multivalued' => false
+                                    ],
+                                ],
+                            'multivalued' => false
+                        ],
+
+
                     ],
                 'multivalued' => false
             ],
