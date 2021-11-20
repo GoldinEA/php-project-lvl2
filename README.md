@@ -14,6 +14,8 @@
 ## Установка.
 git clone https://github.com/GoldinEA/php-project-lvl2.git
 
+composer install
+
 ### Использование.
     gendiff -h
     
@@ -28,3 +30,12 @@ git clone https://github.com/GoldinEA/php-project-lvl2.git
     -h --help                     Show this screen
     -v --version                  Show version
     --format <fmt>                Report format [default: stylish]
+
+### Примеры.
+
+#### Сравнение плоских файлов (yaml)
+[![asciicast](https://asciinema.org/a/eWLeqfrKg9uhWTLyMB7iodhyS.svg)](https://asciinema.org/a/eWLeqfrKg9uhWTLyMB7iodhyS)
+#### Сравнение плоских файлов (json)
+[![asciicast](https://asciinema.org/a/XwKMPxXDkeYkQGkGzNeQmLCDA.svg)](https://asciinema.org/a/XwKMPxXDkeYkQGkGzNeQmLCDA)
+#### Рекурсивное сравнение
+[![asciicast](https://asciinema.org/a/hUkt9LsabcnucRzhmk6H0cIS9.svg)](https://asciinema.org/a/hUkt9LsabcnucRzhmk6H0cIS9)
