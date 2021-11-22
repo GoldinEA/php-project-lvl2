@@ -3,8 +3,8 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use function Differ\Diff\createTree;
-use function Differ\Format\createResult;
+use function Differ\Differ\createTree;
+use function Differ\Format\format;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -184,33 +184,33 @@ class FormatTest extends TestCase
         }';
 
 
-//    public function testDiffHandlerMultilevel()
-//    {
-//        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-//        $stringMultilevelResult = createResult($tree, 'default');
-//        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
-//    }
-//
-//    public function testDiffHandlerMultilevelJson()
-//    {
-//        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-//        $stringMultilevelResult = createResult($tree, 'json');
-//        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
-//    }
-//
-//    public function testDiffHandlerMultilevelPlain()
-//    {
-//        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-//        $stringMultilevelResult = createResult($tree, 'plain');
-//        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
-//    }
+    public function testDiffHandlerMultilevel()
+    {
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = \Differ\Formatters\Stylish\create($tree);
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+    }
 
-//    public function testDiffHandlerSinglelevel()
-//    {
-//        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
-//        $stringSinglelevelResult = createResult($tree, 'default');
-//        $this->assertEquals($this->resultSingleLevel, $stringSinglelevelResult);
-//    }
+    public function testDiffHandlerMultilevelJson()
+    {
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = \Differ\Formatters\Json\create($tree);
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+    }
+
+    public function testDiffHandlerMultilevelPlain()
+    {
+        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $stringMultilevelResult = \Differ\Formatters\Plain\create($tree);
+        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+    }
+
+    public function testDiffHandlerSinglelevel()
+    {
+        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
+        $stringSinglelevelResult = format($tree, 'default');
+        $this->assertEquals($this->resultSingleLevel, $stringSinglelevelResult);
+    }
 
 //    public function testCreateResult()
 //    {

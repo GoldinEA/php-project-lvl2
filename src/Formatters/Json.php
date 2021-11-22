@@ -23,7 +23,6 @@ function create(array $tree): array
 {
     $result = [];
     $formattedTree = array_map(function ($treeElement) use ($result) {
-
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
             $added = is_array($treeElement['value_last_file']) ? array_values(create($treeElement['value_last_file'])) : convertToString($treeElement['value_last_file']);
             $deleted = is_array($treeElement['value_first_file']) ? array_values(create($treeElement['value_first_file'])) : convertToString($treeElement['value_first_file']);

@@ -4,14 +4,6 @@ namespace Differ\Formatters\Stylish;
 
 use const Differ\Format\BOOL_ARRAY;
 
-function clearResult(array $dataDefault): array
-{
-    $clearData = array_filter($dataDefault);
-    return array_map(function ($elementTree) {
-        return substr($elementTree, -1) === PHP_EOL ? substr($elementTree, 0, strlen($elementTree) - 1) : $elementTree;
-    }, $clearData);
-}
-
 function createString(string $name, string $value, int $step, string $char): string
 {
     return substr(str_repeat("    ", $step), 2) . "$char $name: " . $value;
@@ -37,7 +29,6 @@ function convertToString(mixed $value): string
 
 function create(array $tree, int $step = 1): string
 {
-    $spaces = PHP_EOL . str_repeat("    ", $step);
     $formattedTree = array_map(function ($treeElement) use ($step, $spaces) {
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
