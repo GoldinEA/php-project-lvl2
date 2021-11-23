@@ -29,7 +29,7 @@ function convertToString(mixed $value): string
 
 function create(array $tree, int $step = 1): string
 {
-    $formattedTree = array_map(function ($treeElement) use ($step, $spaces) {
+    $formattedTree = array_map(function ($treeElement) use ($step) {
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
             $strAdded = is_array($treeElement['value_last_file'])
