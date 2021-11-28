@@ -1,4 +1,4 @@
-#!/usr/local/bin php
+#! php8-xdebug:latest php
 
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
