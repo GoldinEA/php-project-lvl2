@@ -16,4 +16,8 @@ RUN apt-get update && apt-get upgrade -y \
 
 #    Чистим временные файлы
     && docker-php-source delete \
-    && apt-get autoremove --purge -y && apt-get autoclean -y && apt-get clean -y
+    && apt-get autoremove --purge -y && apt-get autoclean -y && apt-get clean -y \
+
+#    Ставим composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
