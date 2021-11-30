@@ -194,7 +194,7 @@ class FormatTest extends TestCase
     public function testDiffHandlerMultilevelJson()
     {
         $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-        $stringMultilevelResult = \Differ\Formatters\Json\create($tree);
+        $stringMultilevelResult = \Differ\Formatters\Json\format($tree);
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 

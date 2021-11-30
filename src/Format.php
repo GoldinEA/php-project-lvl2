@@ -18,7 +18,7 @@ function format(array $diff, string $format): string
     }
 
     if ($format === 'json') {
-        return json_encode(\Differ\Formatters\Json\create($diff));
+        return json_encode(\Differ\Formatters\Json\format($diff));
     }
 
     if ($format === 'plain') {

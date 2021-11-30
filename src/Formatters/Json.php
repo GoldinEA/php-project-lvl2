@@ -19,13 +19,13 @@ function convertToString(mixed $value): string
     };
 }
 
-function create(array $tree): array
+function format(array $tree): array
 {
     $result = [];
     $formattedTree = array_map(function ($treeElement) use ($result) {
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true) {
-            $added = is_array($treeElement['value_last_file']) ? array_values(create($treeElement['value_last_file'])) : convertToString($treeElement['value_last_file']);
-            $deleted = is_array($treeElement['value_first_file']) ? array_values(create($treeElement['value_first_file'])) : convertToString($treeElement['value_first_file']);
+            $added = is_array($treeElement['value_last_file']) ? array_values(format($treeElement['value_last_file'])) : convertToString($treeElement['value_last_file']);
+            $deleted = is_array($treeElement['value_first_file']) ? array_values(format($treeElement['value_first_file'])) : convertToString($treeElement['value_first_file']);
             $result[createName($treeElement['name'], '-')] = $deleted;
             $result[createName($treeElement['name'], '+')] = $added;
             return $result;
@@ -33,7 +33,7 @@ function create(array $tree): array
 
         if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true) {
             $char = \Differ\Formatters\Stylish\createChar($treeElement['type']);
-            $result[createName($treeElement['name'], $char)] = array_values(create($treeElement['value']));
+            $result[createName($treeElement['name'], $char)] = array_values(format($treeElement['value']));
             return $result;
         }
 
