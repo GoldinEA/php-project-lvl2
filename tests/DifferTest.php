@@ -387,8 +387,8 @@ Property 'group3' was added with value: [complex value]";
     public function testGendiff()
     {
         $result = genDiff(
-            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file.json',
-            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file1.json'
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
         );
         $this->assertEquals($this->testGendiff, $result);
     }
@@ -396,8 +396,8 @@ Property 'group3' was added with value: [complex value]";
     public function testGendiffPlain()
     {
         $result = genDiff(
-            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file.json',
-            '..' . DIRECTORY_SEPARATOR . '/tests/fixures/file1.json',
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
             'plain'
         );
         $this->assertEquals($this->testPlain, $result);
