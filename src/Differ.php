@@ -6,6 +6,7 @@ namespace Differ\Differ;
 use Exception;
 use function Differ\Format\format;
 use function Differ\Parsers\getFileData;
+use function Funct\Collection\sortBy;
 
 /**
  * @throws Exception Стандартное исключение.
@@ -24,7 +25,9 @@ function createTree(array $data1, array $data2): array
     $keysFirst = array_keys($data1);
     $keysLast = array_keys($data2);
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
-    sort($allKeys);
+    $allKeysSorted = array_values(sortBy($allKeys, function ($num) {
+        return $num;
+    }));
     $result = array_map(function ($key) use ($data1, $data2) {
         if (!array_key_exists($key, $data1) || !array_key_exists($key, $data2)) {
             $valueFirstFile = array_key_exists($key, $data1) ? createValueTree($data1[$key]) : '';
@@ -60,7 +63,7 @@ function createTree(array $data1, array $data2): array
                 'value_first_file' => is_array($data1[$key])
                     ? createValueTree($data1[$key])['value']
                     : $data1[$key]];
-    }, $allKeys);
+    }, $allKeysSorted);
 
     return array_values($result) ?? [];
 }
