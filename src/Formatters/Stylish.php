@@ -7,7 +7,7 @@ use const Differ\Format\BOOL_ARRAY;
 
 function createString(string $name, string $value, int $step, string $char): string
 {
-    return substr(str_repeat("    ", $step), 2) . "$char $name: " . $value;
+    return substr(createSpaces($step), 2) . "$char $name: " . $value;
 }
 
 function createChar(string $type): string
@@ -21,13 +21,11 @@ function createChar(string $type): string
 
 function convertToString(mixed $value, int $step): string
 {
-    $spacesFinal = str_repeat("    ", $step);
-
     return match (true) {
         is_array($value) => '{' . PHP_EOL . implode(
             PHP_EOL,
             createChild($value, $step)
-        ) . PHP_EOL. $spacesFinal . '}',
+        ) . PHP_EOL. createSpaces($step) . '}',
         $value === true, $value === false => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,
@@ -55,7 +53,6 @@ function createSpaces(int $step): string
  */
 function create(array $tree, int $step = 1): string
 {
-    $t= 1;
     $formattedTree = array_map(
         function ($treeElement) use ($step) {
 
@@ -94,6 +91,6 @@ function create(array $tree, int $step = 1): string
         },
         $tree
     );
-    $spacesFinal = $step === 1 ? '' : substr(str_repeat("    ", $step), 4);
+    $spacesFinal = $step === 1 ? '' : substr(createSpaces($step), 4);
     return '{' . PHP_EOL . implode("\n", $formattedTree) . PHP_EOL . $spacesFinal . '}';
 }
