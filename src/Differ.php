@@ -7,6 +7,7 @@ use Exception;
 use function Differ\Format\format;
 use function Differ\Parsers\getFileData;
 use function Funct\Collection\sortBy;
+use function Funct\Collection\union;
 
 /**
  * @throws Exception Стандартное исключение.
@@ -16,72 +17,62 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'sty
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
-    $tree = createTree($dataFile1, $dataFile2);
+    $tree = buildDiv($dataFile1, $dataFile2);
     return format($tree, $format);
 }
 
-function createTree(array $data1, array $data2): array
+function buildDiv(array $dataOne, array $dataTwo): array
 {
-    $keysFirst = array_keys($data1);
-    $keysLast = array_keys($data2);
-    $allKeys = array_unique(array_merge($keysFirst, $keysLast));
-    $allKeysSorted = array_values(sortBy($allKeys, function ($num) {
+    $keysFirst = array_keys($dataOne);
+    $keysLast = array_keys($dataTwo);
+    $allKeys = union($keysFirst, $keysLast);
+    $allKeysSorted = sortBy($allKeys, function ($num) {
         return $num;
-    }));
-    $result = array_map(function ($key) use ($data1, $data2) {
-        if (!array_key_exists($key, $data1) || !array_key_exists($key, $data2)) {
-            $valueFirstFile = array_key_exists($key, $data1) ? createValueTree($data1[$key]) : '';
-            $valueLastFile = array_key_exists($key, $data2) ? createValueTree($data2[$key]) : '';
-            return array_key_exists($key, $data1)
-                ? [
-                    'name' => $key,
-                    'multivalued' => false,
-                    'type' => 'deleted',
-                    'value' => $valueFirstFile['value'],
-                    'multilevel' => is_array($valueFirstFile['value'])
-                ]
-                : [
-                    'name' => $key,
-                    'multivalued' => false,
-                    'type' => 'added',
-                    'value' => $valueLastFile['value'],
-                    'multilevel' => is_array($valueLastFile['value'])
-                ];
+    });
+
+    $result = array_map(function ($key) use ($dataOne, $dataTwo) {
+        $valueOne = $dataOne[$key] ?? null;
+        $valueTwo = $dataTwo[$key] ?? null;
+
+        if (!array_key_exists($key, $dataOne)) {
+            return [
+                'name' => $key,
+                'type' => 'added',
+                'value' => $valueTwo,
+            ];
         }
 
-        if (is_array($data2[$key]) && is_array($data1[$key])) {
-            $child = createTree($data1[$key], $data2[$key]);
-            return ['name' => $key, 'type' => 'changed', 'multivalued' => false, 'multilevel' => true, 'value' => $child];
+        if (!array_key_exists($key, $dataTwo)) {
+            return [
+                'name' => $key,
+                'type' => 'deleted',
+                'value' => $valueOne,
+            ];
         }
 
-        return $data1[$key] === $data2[$key]
-            ? ['name' => $key, 'multivalued' => false, 'type' => 'no_change', 'multilevel' => false, 'value' => $data2[$key]]
-            : ['name' => $key, 'multivalued' => true, 'type' => 'changed', 'multilevel' => is_array($data2[$key]) || is_array(createValueTree($data1[$key])['value']),
-                'value_last_file' => is_array($data2[$key])
-                    ? createValueTree($data2[$key])['value']
-                    : $data2[$key],
-                'value_first_file' => is_array($data1[$key])
-                    ? createValueTree($data1[$key])['value']
-                    : $data1[$key]];
+        if (is_array($valueTwo) && is_array($valueOne)) {
+            return [
+                'name' => $key,
+                'type' => 'parent',
+                'child' => buildDiv($valueOne, $valueTwo),
+            ];
+        }
+
+        if ($valueTwo !== $valueOne) {
+            return [
+                'name' => $key,
+                'type' => 'changed',
+                'value_last_data' => $valueOne,
+                'value_first_data' => $valueTwo
+            ];
+        }
+
+
+        return [
+            'name' => $key,
+            'type' => 'no_change',
+            'value' => $valueOne,
+        ];
     }, $allKeysSorted);
-
     return array_values($result) ?? [];
-}
-
-function createValueTree($dataValue): array
-{
-    if (is_array($dataValue)) {
-        $keys = array_keys($dataValue);
-
-        return ['value' => array_map(function ($key) use ($dataValue) {
-            if (is_array($dataValue[$key])) {
-                $child = createValueTree($dataValue[$key]);
-                return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => true, 'value' => $child['value']];
-            }
-
-            return ['name' => $key, 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => $dataValue[$key]];
-        }, $keys)];
-    }
-
-    return ['value' => $dataValue];
 }

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
+use function Differ\Differ\buildDiv;
 use function Differ\Differ\createTree;
 use function Differ\Format\format;
 
@@ -175,55 +176,40 @@ class FormatTest extends TestCase
 
     private $resultSingleLevel =
         '{
-          - follow: false
-            host: hexlet.io
-          - proxy: 123.234.53.22
-          - timeout: 50
-          + timeout: 20
-          + verbose: true
-        }';
+  - follow: false
+    host: hexlet.io
+  - proxy: 123.234.53.22
+  - timeout: 20
+  + timeout: 50
+  + verbose: true
+}';
 
 
     public function testDiffHandlerMultilevel()
     {
-        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $tree = buildDiv($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
         $stringMultilevelResult = \Differ\Formatters\Stylish\create($tree);
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 
     public function testDiffHandlerMultilevelJson()
     {
-        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $tree = buildDiv($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
         $stringMultilevelResult = \Differ\Formatters\Json\format($tree);
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 
     public function testDiffHandlerMultilevelPlain()
     {
-        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+        $tree = buildDiv($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
         $stringMultilevelResult = \Differ\Formatters\Plain\create($tree);
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 
     public function testDiffHandlerSinglelevel()
     {
-        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
-        $stringSinglelevelResult = format($tree, 'default');
+        $tree = buildDiv($this->dataFirstFile, $this->dataLastFile);
+        $stringSinglelevelResult = format($tree, 'stylish');
         $this->assertEquals($this->resultSingleLevel, $stringSinglelevelResult);
     }
-
-//    public function testCreateResult()
-//    {
-//
-//    }
-//
-//    public function testYamlInfo()
-//    {
-//
-//    }
-//
-//    public function testCreateBodyRequest()
-//    {
-//
-//    }
 }
