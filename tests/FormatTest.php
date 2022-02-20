@@ -175,14 +175,14 @@ class FormatTest extends TestCase
 }';
 
     private $resultSingleLevel =
-        '{
-  - follow: false
-    host: hexlet.io
-  - proxy: 123.234.53.22
-  - timeout: 20
-  + timeout: 50
-  + verbose: true
-}';
+        '{' . PHP_EOL .
+        '- follow: false' . PHP_EOL .
+        ' host: hexlet.io' . PHP_EOL .
+        '- proxy: 123.234.53.22' . PHP_EOL .
+        '- timeout: 20' . PHP_EOL .
+        '+ timeout: 50' . PHP_EOL .
+        '+ verbose: true' . PHP_EOL .
+        '}';
 
 
     public function testDiffHandlerMultilevel()
@@ -195,7 +195,7 @@ class FormatTest extends TestCase
     public function testDiffHandlerMultilevelJson()
     {
         $tree = buildDiv($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-        $stringMultilevelResult = \Differ\Formatters\Json\format($tree);
+        $stringMultilevelResult = json_encode(\Differ\Formatters\Json\create($tree));
         $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
     }
 

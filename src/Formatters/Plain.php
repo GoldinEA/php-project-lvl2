@@ -13,36 +13,33 @@ function create(array $tree, int $step = 1, array $structureName = []): string
             : $treeElement['name'];
         $status = getPlainStatus($treeElement['type']);
 
-        if ($treeElement['multilevel'] === true && $treeElement['multivalued'] === true && $status !== '') {
-            $strAdded = is_array($treeElement['value_last_file'])
-                ? "[complex value]"
-                : createStringResult($treeElement['value_last_file']);
-            $strDeleted = is_array($treeElement['value_first_file'])
-                ? "[complex value]"
-                : createStringResult($treeElement['value_first_file']);
-            return "Property '$name' was updated. From $strDeleted to $strAdded";
-        }
-
-        if ($treeElement['multilevel'] === true && $treeElement['multivalued'] !== true && $status !== '') {
-            $baseLine = create($treeElement['value'], $step + 1, $structureName);
-            $startLine = $status === 'removed'
-                ? ""
-                : " with value: [complex value]";
-            return $status !== 'updated'
-                ? "Property '$name' was $status" . $startLine . PHP_EOL . $baseLine
-                : $baseLine;
-        }
-        if ($status !== '') {
-            switch ($treeElement['type']) {
-                case 'changed':
-                    $deleted = createStringResult($treeElement['value_first_file']);
-                    $added = createStringResult($treeElement['value_last_file']);
-                    return "Property '$name' was $status. From $deleted to $added";
-                case 'deleted':
-                    return "Property '$name' was $status";
-                case 'added':
-                    return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
-            }
+        switch ($treeElement['type']) {
+            case 'changed':
+                if (is_array($treeElement['value_last_data']) || is_array($treeElement['value_first_data'])) {
+                    $strAdded = is_array($treeElement['value_last_data'])
+                        ? "[complex value]"
+                        : createStringResult($treeElement['value_last_data']);
+                    $strDeleted = is_array($treeElement['value_first_data'])
+                        ? "[complex value]"
+                        : createStringResult($treeElement['value_first_data']);
+                    return "Property '$name' was updated. From $strDeleted to $strAdded";
+                }
+                $deleted = createStringResult($treeElement['value_first_data']);
+                $added = createStringResult($treeElement['value_last_data']);
+                return "Property '$name' was $status. From $deleted to $added";
+            case 'deleted':
+                if (is_array($treeElement['value']) ?? false) {
+                    return "Property '$name' was $status" . PHP_EOL;
+                }
+                return "Property '$name' was $status";
+            case 'added':
+                if (is_array($treeElement['value']) ?? false) {
+                    $startLine = " with value: [complex value]";
+                    return "Property '$name' was $status" . $startLine . PHP_EOL;
+                }
+                return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
+            case 'parent':
+                return create($treeElement['child'], $step + 1);
         }
     }, $tree);
     $clearData = clearResult($formattedTree);

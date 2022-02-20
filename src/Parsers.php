@@ -35,3 +35,12 @@ function getYamlInfo(string $pathToFile): array
 {
     return Yaml::parseFile($pathToFile) ?? [];
 }
+
+function createChar(string $type): string
+{
+    return match ($type) {
+        'deleted' => '-',
+        'added' => '+',
+        default => ' '
+    };
+}
