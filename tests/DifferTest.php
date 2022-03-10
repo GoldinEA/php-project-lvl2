@@ -3,7 +3,6 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use function Differ\Differ\createTree;
 use function Differ\Differ\genDiff;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -82,307 +81,87 @@ class DifferTest extends TestCase
         ]
     ];
 
-    private string $testGendiff = '{
-    common: {
-      + follow: false
-        setting1: Value 1
-      - setting2: 200
-      - setting3: true
-      + setting3: null
-      + setting4: blah blah
-      + setting5: {
-            key5: value5
-        }
-        setting6: {
-            doge: {
-              - wow: 
-              + wow: so much
-            }
-            key: value
-          + ops: vops
-        }
-    }
-    group1: {
-      - baz: bas
-      + baz: bars
-        foo: bar
-      - nest: {
-            key: value
-        }
-      + nest: str
-    }
-  - group2: {
-        abc: 12345
-        deep: {
-            id: 45
-        }
-    }
-  + group3: {
-        deep: {
-            id: {
-                number: 45
-            }
-        }
-        fee: 100500
-    }
-}';
-
-    private string $testPlain = "Property 'common.follow' was added with value: false
-Property 'common.setting2' was removed
-Property 'common.setting3' was updated. From true to null
-Property 'common.setting4' was added with value: 'blah blah'
-Property 'common.setting5' was added with value: [complex value]
-Property 'common.setting6.doge.wow' was updated. From '' to 'so much'
-Property 'common.setting6.ops' was added with value: 'vops'
-Property 'group1.baz' was updated. From 'bas' to 'bars'
-Property 'group1.nest' was updated. From [complex value] to 'str'
-Property 'group2' was removed
-Property 'group3' was added with value: [complex value]";
+    private string $testJson =
+        '[{"name":"common","type":"parent",'
+        .'"child":[{"name":"follow","type":"added","value":false},'
+        .'{"name":"setting1","type":"no_change","value":"Value 1"},'
+        .'{"name":"setting2","type":"deleted","value":200},'
+        .'{"name":"setting3","type":"changed","value_last_data":true,"value_first_data":null},'
+        .'{"name":"setting4","type":"added","value":"blah blah"},'
+        .'{"name":"setting5","type":"added","value":{"key5":"value5"}},'
+        .'{"name":"setting6","type":"parent","child":'
+        .'[{"name":"doge","type":"parent","child":'
+        .'[{"name":"wow","type":"changed","value_last_data":"","value_first_data":"so much"}]},'
+        .'{"name":"key","type":"no_change","value":"value"},{"name":"ops","type":"added","value":"vops"}]}]}'
+        .',{"name":"group1","type":"parent","child":'
+        .'[{"name":"baz","type":"changed","value_last_data":"bas","value_first_data":"bars"},'
+        .'{"name":"foo","type":"no_change","value":"bar"},'
+        .'{"name":"nest","type":"changed","value_last_data":{"key":"value"},"value_first_data":"str"}]},'
+        .'{"name":"group2","type":"deleted","value":{"abc":12345,"deep":{"id":45}}},'
+        .'{"name":"group3","type":"added","value":{"deep":{"id":{"number":45}},"fee":100500}}]';
 
 
-    public function testCreateTree()
-    {
-        $expected = [
-            ['name' => 'follow', 'type' => 'deleted', 'value' => false, 'multilevel' => false, 'multivalued' => false],
-            ['name' => 'host', 'type' => 'no_change', 'multivalued' => false, 'multilevel' => false, 'value' => 'hexlet.io'],
-            ['name' => 'proxy', 'type' => 'deleted', 'value' => '123.234.53.22', 'multilevel' => false, 'multivalued' => false],
-            ['name' => 'timeout', 'type' => 'changed', 'value_last_file' => 20, 'value_first_file' => 50, 'multivalued' => true, 'multilevel' => false],
-            ['name' => 'verbose', 'type' => 'added', 'value' => true, 'multilevel' => false, 'multivalued' => false],
-        ];
+    private string $testGendiff =
+        '{' . PHP_EOL .
+        '   common: {' . PHP_EOL .
+        '      + follow: false' . PHP_EOL .
+        '        setting1: Value 1' . PHP_EOL .
+        '      - setting2: 200' . PHP_EOL .
+        '      - setting3: true' . PHP_EOL .
+        '      + setting3: null' . PHP_EOL .
+        '      + setting4: blah blah' . PHP_EOL .
+        '      + setting5: {' . PHP_EOL .
+        '          key5: value5' . PHP_EOL .
+        '        }' . PHP_EOL .
+        '       setting6: {' . PHP_EOL .
+        '           doge: {' . PHP_EOL .
+        '              - wow: ' . PHP_EOL .
+        '              + wow: so much' . PHP_EOL .
+        '            }' . PHP_EOL .
+        '            key: value' . PHP_EOL .
+        '          + ops: vops' . PHP_EOL .
+        '        }' . PHP_EOL .
+        '    }' . PHP_EOL .
+        '   group1: {' . PHP_EOL .
+        '      - baz: bas' . PHP_EOL .
+        '      + baz: bars' . PHP_EOL .
+        '        foo: bar' . PHP_EOL .
+        '      - nest: {' . PHP_EOL .
+        '          key: value' . PHP_EOL .
+        '        }' . PHP_EOL .
+        '      + nest: str' . PHP_EOL .
+        '    }' . PHP_EOL .
+        '  - group2: {' . PHP_EOL .
+        '      abc: 12345' . PHP_EOL .
+        '      deep: {' . PHP_EOL .
+        '          id: 45' . PHP_EOL .
+        '        }' . PHP_EOL .
+        '    }' . PHP_EOL .
+        '  + group3: {' . PHP_EOL .
+        '      deep: {' . PHP_EOL .
+        '          id: {' . PHP_EOL .
+        '              number: 45' . PHP_EOL .
+        '            }' . PHP_EOL .
+        '        }' . PHP_EOL .
+        '      fee: 100500' . PHP_EOL .
+        '    }' . PHP_EOL .
+        '}';
 
-        $tree = createTree($this->dataFirstFile, $this->dataLastFile);
-        $this->assertEquals($expected, $tree);
-    }
-
-    public function testCreateTreeMultilevel()
-    {
-        $expected = [
-            [
-                'name' => 'common',
-                'type' => 'changed',
-                'multilevel' => true,
-                'value' =>
-                    [
-                        [
-                            'name' => 'follow',
-                            'type' => 'added',
-                            'value' => false,
-                            'multilevel' => false,
-                            'multivalued' => false
-                        ],
-                        [
-                            'name' => 'setting1',
-                            'type' => 'no_change',
-                            'value' => 'Value 1',
-                            'multivalued' => false,
-                            'multilevel' => false
-                        ],
-                        [
-                            'name' => 'setting2',
-                            'type' => 'deleted',
-                            'value' => 200,
-                            'multilevel' => false,
-                            'multivalued' => false
-                        ],
-                        [
-                            'name' => 'setting3',
-                            'type' => 'changed',
-                            'value_last_file' => null,
-                            'value_first_file' => true,
-                            'multilevel' => false,
-                            'multivalued' => true
-                        ],
-                        [
-                            'name' => 'setting4',
-                            'type' => 'added',
-                            'value' => 'blah blah',
-                            'multilevel' => false,
-                            'multivalued' => false
-                        ],
-                        [
-                            'name' => 'setting5',
-                            'type' => 'added',
-                            'value' =>
-                                [
-                                    0 =>
-                                        [
-                                            'name' => 'key5',
-                                            'type' => 'no_change',
-                                            'value' => 'value5',
-                                            'multivalued' => false,
-                                            'multilevel' => false
-                                        ],
-                                ],
-                            'multilevel' => true,
-                            'multivalued' => false
-                        ],
-                        [
-                            'name' => 'setting6',
-                            'type' => 'changed',
-                            'multilevel' => true,
-                            'value' =>
-                                [
-                                    [
-                                        'name' => 'doge',
-                                        'type' => 'changed',
-                                        'multilevel' => true,
-                                        'value' =>
-                                            [
-                                                [
-                                                    'name' => 'wow',
-                                                    'type' => 'changed',
-                                                    'value_last_file' => 'so much',
-                                                    'value_first_file' => '',
-                                                    'multilevel' => false,
-                                                    'multivalued' => true
-
-                                                ],
-                                            ],
-                                        'multivalued' => false
-                                    ],
-                                    [
-                                        'name' => 'key',
-                                        'type' => 'no_change',
-                                        'value' => 'value',
-                                        'multivalued' => false,
-                                        'multilevel' => false
-                                    ],
-
-                                    [
-                                        'name' => 'ops',
-                                        'type' => 'added',
-                                        'value' => 'vops',
-                                        'multilevel' => false,
-                                        'multivalued' => false
-                                    ],
-                                ],
-                            'multivalued' => false
-                        ],
+    private string $testPlain =
+        "Property 'follow' was added with value: false" . PHP_EOL .
+        "Property 'setting2' was removed" . PHP_EOL .
+        "Property 'setting3' was updated. From null to true" . PHP_EOL .
+        "Property 'setting4' was added with value: 'blah blah'" . PHP_EOL .
+        "Property 'setting5' was added with value: [complex value]" . PHP_EOL .
+        "Property 'wow' was updated. From 'so much' to ''" . PHP_EOL .
+        "Property 'ops' was added with value: 'vops'" . PHP_EOL .
+        "Property 'baz' was updated. From 'bars' to 'bas'" . PHP_EOL .
+        "Property 'nest' was updated. From 'str' to [complex value]" . PHP_EOL .
+        "Property 'group2' was removed" . PHP_EOL .
+        "Property 'group3' was added with value: [complex value]";
 
 
-                    ],
-                'multivalued' => false
-            ],
-            [
-                'name' => 'group1',
-                'type' => 'changed',
-                'multilevel' => true,
-                'value' =>
-                    [
-                        [
-                            'name' => 'baz',
-                            'type' => 'changed',
-                            'value_last_file' => 'bars',
-                            'value_first_file' => 'bas',
-                            'multilevel' => false,
-                            'multivalued' => true
-                        ],
-                        [
-                            'name' => 'foo',
-                            'type' => 'no_change',
-                            'value' => 'bar',
-                            'multivalued' => false,
-                            'multilevel' => false
-                        ],
-                        [
-                            'name' => 'nest',
-                            'type' => 'changed',
-                            'value_last_file' => 'str',
-                            'value_first_file' =>
-                                [
-                                    [
-                                        'name' => 'key',
-                                        'type' => 'no_change',
-                                        'value' => 'value',
-                                        'multivalued' => false,
-                                        'multilevel' => false
-                                    ],
-                                ],
-                            'multilevel' => true,
-                            'multivalued' => true
-                        ],
-                    ],
-                'multivalued' => false
-            ],
-            [
-                'name' => 'group2',
-                'type' => 'deleted',
-                'value' =>
-                    [
-                        [
-                            'name' => 'abc',
-                            'type' => 'no_change',
-                            'value' => 12345,
-                            'multivalued' => false,
-                            'multilevel' => false
-                        ],
-                        [
-                            'name' => 'deep',
-                            'type' => 'no_change',
-                            'multilevel' => true,
-                            'value' =>
-                                [
-                                    [
-                                        'name' => 'id',
-                                        'type' => 'no_change',
-                                        'value' => 45,
-                                        'multivalued' => false,
-                                        'multilevel' => false
-                                    ],
-                                ],
-                            'multivalued' => false
-                        ],
-                    ],
-                'multilevel' => true,
-                'multivalued' => false
-            ],
-            [
-                'name' => 'group3',
-                'type' => 'added',
-                'value' =>
-                    [
-                        [
-                            'name' => 'deep',
-                            'type' => 'no_change',
-                            'multilevel' => true,
-                            'value' =>
-                                [
-                                    [
-                                        'name' => 'id',
-                                        'type' => 'no_change',
-                                        'multilevel' => true,
-                                        'value' =>
-                                            [
-                                                [
-                                                    'name' => 'number',
-                                                    'type' => 'no_change',
-                                                    'value' => 45,
-                                                    'multivalued' => false,
-                                                    'multilevel' => false
-                                                ],
-                                            ],
-                                        'multivalued' => false
-                                    ],
-                                ],
-                            'multivalued' => false
-                        ],
 
-                        [
-                            'name' => 'fee',
-                            'type' => 'no_change',
-                            'value' => 100500,
-                            'multivalued' => false,
-                            'multilevel' => false
-                        ],
-                    ],
-                'multilevel' => true,
-                'multivalued' => false
-            ],
-        ];
-
-        $tree = createTree($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-        $this->assertEquals($expected, $tree);
-    }
 
     public function testGendiff()
     {
@@ -401,5 +180,15 @@ Property 'group3' was added with value: [complex value]";
             'plain'
         );
         $this->assertEquals($this->testPlain, $result);
+    }
+
+    public function testGendiffJson()
+    {
+        $result = genDiff(
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
+            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
+            'json'
+        );
+        $this->assertEquals($this->testJson, $result);
     }
 }

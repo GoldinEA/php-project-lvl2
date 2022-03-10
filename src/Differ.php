@@ -17,11 +17,11 @@ function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'sty
 {
     $dataFile1 = getFileData($pathToFile1);
     $dataFile2 = getFileData($pathToFile2);
-    $tree = buildDiv($dataFile1, $dataFile2);
+    $tree = buildDiff($dataFile1, $dataFile2);
     return format($tree, $format);
 }
 
-function buildDiv(array $dataOne, array $dataTwo): array
+function buildDiff(array $dataOne, array $dataTwo): array
 {
     $keysFirst = array_keys($dataOne);
     $keysLast = array_keys($dataTwo);
@@ -54,7 +54,7 @@ function buildDiv(array $dataOne, array $dataTwo): array
             return [
                 'name' => $key,
                 'type' => 'parent',
-                'child' => buildDiv($valueOne, $valueTwo),
+                'child' => buildDiff($valueOne, $valueTwo),
             ];
         }
 

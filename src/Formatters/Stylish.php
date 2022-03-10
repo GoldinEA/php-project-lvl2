@@ -1,12 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Differ\Formatters\Stylish;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
+use function Differ\Parsers\createChar;
 use const Differ\Format\BOOL_ARRAY;
 
-
-function createString(string $name, string $value, int $step, string $char): string
+#[Pure] function createString(string $name, string $value, int $step, string $char): string
 {
     return substr(createSpaces($step), 2) . "$char $name: " . $value;
 }
@@ -45,7 +47,7 @@ function createSpaces(int $step): string
 /**
  * @throws \Exception
  */
-function create(array $tree, int $step = 1): string
+function format(array $tree, int $step = 1): string
 {
     $formattedTree = array_map(
         function ($treeElement) use ($step) {
@@ -54,7 +56,7 @@ function create(array $tree, int $step = 1): string
                 case 'parent':
                     return createString(
                         $treeElement['name'],
-                        create($treeElement['child'], $step + 1),
+                        format($treeElement['child'], $step + 1),
                         $step,
                         ''
                     );
@@ -72,7 +74,7 @@ function create(array $tree, int $step = 1): string
                             '+'
                         );
                 case 'deleted' || 'added' || 'no_change':
-                    $char = \Differ\Parsers\createChar($treeElement['type']);
+                    $char = createChar($treeElement['type']);
                     return createString(
                         $treeElement['name'],
                         convertToString($treeElement['value'], $step),

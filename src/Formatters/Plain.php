@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Differ\Formatters\Plain;
 
 use const Differ\Format\BOOL_ARRAY;
 
-function create(array $tree, int $step = 1, array $structureName = []): string
+function format(array $tree, int $step = 1, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($step, $structureName) {
         $structureName[$step] = $treeElement['name'];
@@ -39,7 +40,7 @@ function create(array $tree, int $step = 1, array $structureName = []): string
                 }
                 return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
             case 'parent':
-                return create($treeElement['child'], $step + 1);
+                return format($treeElement['child'], $step + 1);
         }
     }, $tree);
     $clearData = clearResult($formattedTree);
@@ -48,7 +49,9 @@ function create(array $tree, int $step = 1, array $structureName = []): string
 
 function createStringResult(mixed $value): string
 {
-    return !is_null($value) && !is_bool($value) && !is_int($value) ? "'" . convertToString($value) . "'" : convertToString($value);
+    return !is_null($value) && !is_bool($value) && !is_int($value)
+        ? "'" . convertToString($value) . "'"
+        : convertToString($value);
 }
 
 function getPlainStatus(string $typeElement): string

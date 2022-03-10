@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Differ\Format;
 
 use Exception;
-use function Differ\Formatters\Plain\create;
+use function Differ\Formatters\Plain\format as formatPlain;
+use function Differ\Formatters\Json\format as formatJson;
+use function Differ\Formatters\Stylish\format as formatStylish;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
@@ -14,15 +16,15 @@ const BOOL_ARRAY = [true => 'true', false => 'false'];
 function format(array $diff, string $format): string
 {
     if ($format === 'stylish') {
-        return \Differ\Formatters\Stylish\create($diff);
+        return formatStylish($diff);
     }
 
     if ($format === 'json') {
-        return json_encode(\Differ\Formatters\Json\format($diff));
+        return formatJson($diff);
     }
 
     if ($format === 'plain') {
-        return create($diff);
+        return formatPlain($diff);
     }
 
     throw new Exception("$format is not found.");
