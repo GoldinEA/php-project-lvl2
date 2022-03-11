@@ -54,12 +54,13 @@ function format(array $tree, int $step = 1): string
 
             switch ($treeElement['type']) {
                 case 'parent':
-                    return createString(
+                    $parentResult = createString(
                         $treeElement['name'],
                         format($treeElement['child'], $step + 1),
                         $step,
-                        '  '
+                        ''
                     );
+                    return substr($parentResult, 2);
                 case 'changed':
                     return createString(
                         $treeElement['name'],
