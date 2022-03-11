@@ -60,7 +60,7 @@ function format(array $tree, int $step = 1): string
                         $step,
                         ''
                     );
-                    return str_repeat(' ', $step + 1) . $parentResult;
+                    return str_repeat(' ', $step) . $parentResult;
                 case 'changed':
                     return createString(
                         $treeElement['name'],
