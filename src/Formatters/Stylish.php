@@ -10,7 +10,7 @@ use const Differ\Format\BOOL_ARRAY;
 
 #[Pure] function createString(string $name, string $value, int $step, string $char): string
 {
-    return substr(createSpaces($step), 2) . "$char $name: " . $value;
+    return createSpaces($step) . "$char $name: " . $value;
 }
 
 
