@@ -58,7 +58,7 @@ function format(array $tree, int $step = 1): string
                         $treeElement['name'],
                         format($treeElement['child'], $step + 1),
                         $step,
-                        ''
+                        '  '
                     );
                 case 'changed':
                     return createString(
