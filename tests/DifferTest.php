@@ -103,7 +103,7 @@ class DifferTest extends TestCase
 
     private string $testGendiff =
         '{' . PHP_EOL .
-        '   common: {' . PHP_EOL .
+        '      common: {' . PHP_EOL .
         '      + follow: false' . PHP_EOL .
         '        setting1: Value 1' . PHP_EOL .
         '      - setting2: 200' . PHP_EOL .
@@ -113,8 +113,8 @@ class DifferTest extends TestCase
         '      + setting5: {' . PHP_EOL .
         '          key5: value5' . PHP_EOL .
         '        }' . PHP_EOL .
-        '       setting6: {' . PHP_EOL .
-        '           doge: {' . PHP_EOL .
+        '           setting6: {' . PHP_EOL .
+        '                doge: {' . PHP_EOL .
         '              - wow: ' . PHP_EOL .
         '              + wow: so much' . PHP_EOL .
         '            }' . PHP_EOL .
@@ -122,7 +122,7 @@ class DifferTest extends TestCase
         '          + ops: vops' . PHP_EOL .
         '        }' . PHP_EOL .
         '    }' . PHP_EOL .
-        '   group1: {' . PHP_EOL .
+        '      group1: {' . PHP_EOL .
         '      - baz: bas' . PHP_EOL .
         '      + baz: bars' . PHP_EOL .
         '        foo: bar' . PHP_EOL .
