@@ -15,12 +15,12 @@ class ParsersTest extends TestCase
         'follow' => false,
     );
 
-    public function testYaml()
-    {
-        $path = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.yml');
-        $fileData = getFileData($path);
-        $this->assertEquals($this->testData, $fileData);
-    }
+//    public function testYaml()
+//    {
+//        $path = realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.yml');
+//        $fileData = getFileData($path);
+//        $this->assertEquals($this->testData, $fileData);
+//    }
 
     public function testJson()
     {

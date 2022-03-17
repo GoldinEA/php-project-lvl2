@@ -170,15 +170,15 @@ class FormatTest extends TestCase
         "Property 'group3' was added with value: [complex value]";
 
 
-    /**
-     * @throws \Exception
-     */
-    public function testDiffHandlerMultilevel()
-    {
-        $tree = buildDiff($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
-        $stringMultilevelResult = \Differ\Formatters\Stylish\format($tree);
-        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
-    }
+//    /**
+//     * @throws \Exception
+//     */
+//    public function testDiffHandlerMultilevel()
+//    {
+//        $tree = buildDiff($this->dataFirstFileMultilevel, $this->dataLastFileMultilevel);
+//        $stringMultilevelResult = \Differ\Formatters\Stylish\format($tree);
+//        $this->assertEquals($this->resultMultilevel, $stringMultilevelResult);
+//    }
 
     public function testDiffHandlerMultilevelJson()
     {
