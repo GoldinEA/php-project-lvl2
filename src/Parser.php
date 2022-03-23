@@ -20,27 +20,8 @@ function getFileData(string $pathToFile): array
     $format = $path->getExtension();
 
     return match ($format) {
-        'yaml', 'yml' => getYamlInfo($pathToFile),
-        'json' => getJsonInfo($pathToFile),
+        'yaml', 'yml' => Yaml::parseFile($pathToFile) ?? [],
+        'json' => json_decode(file_get_contents($pathToFile), true) ?? [],
         default => throw new Exception("Format file $format not found."),
-    };
-}
-
-function getJsonInfo(string $pathToFile): array
-{
-    return json_decode(file_get_contents($pathToFile), true) ?? [];
-}
-
-function getYamlInfo(string $pathToFile): array
-{
-    return Yaml::parseFile($pathToFile) ?? [];
-}
-
-function createChar(string $type): string
-{
-    return match ($type) {
-        'deleted' => '-',
-        'added' => '+',
-        default => ' '
     };
 }

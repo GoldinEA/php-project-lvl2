@@ -5,18 +5,14 @@ namespace Differ\Differ;
 
 use Exception;
 use function Differ\Format\format;
-use function Differ\Parsers\getFileData;
 use function Funct\Collection\sortBy;
 use function Funct\Collection\union;
 
 /**
  * @throws Exception Стандартное исключение.
  */
-
-function genDiff(string $pathToFile1, string $pathToFile2, string $format = 'stylish'): string
+function genDiff(array $dataFile1, array $dataFile2, string $format = 'stylish'): string
 {
-    $dataFile1 = getFileData($pathToFile1);
-    $dataFile2 = getFileData($pathToFile2);
     $tree = buildDiff($dataFile1, $dataFile2);
     return format($tree, $format);
 }
@@ -62,7 +58,7 @@ function buildDiff(array $dataOne, array $dataTwo): array
             return [
                 'name' => $key,
                 'type' => 'changed',
-                'value_last_data' => $valueOne,
+                'value_two_data' => $valueOne,
                 'value_first_data' => $valueTwo
             ];
         }

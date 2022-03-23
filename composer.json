@@ -21,12 +21,15 @@
     "autoload": {
         "files": [
             "src/Differ.php",
-            "src/Format.php",
-            "src/Parsers.php",
+            "src/Formatter.php",
+            "src/Parser.php",
             "src/Formatters/Json.php",
             "src/Formatters/Plain.php",
             "src/Formatters/Stylish.php"
-        ]
+        ],
+        "psr-4": {
+
+        }
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

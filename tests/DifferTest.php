@@ -4,6 +4,7 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use function Differ\Differ\genDiff;
+use function Differ\Parsers\getFileData;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -86,17 +87,17 @@ class DifferTest extends TestCase
         .'"child":[{"name":"follow","type":"added","value":false},'
         .'{"name":"setting1","type":"no_change","value":"Value 1"},'
         .'{"name":"setting2","type":"deleted","value":200},'
-        .'{"name":"setting3","type":"changed","value_last_data":true,"value_first_data":null},'
+        .'{"name":"setting3","type":"changed","value_two_data":true,"value_first_data":null},'
         .'{"name":"setting4","type":"added","value":"blah blah"},'
         .'{"name":"setting5","type":"added","value":{"key5":"value5"}},'
         .'{"name":"setting6","type":"parent","child":'
         .'[{"name":"doge","type":"parent","child":'
-        .'[{"name":"wow","type":"changed","value_last_data":"","value_first_data":"so much"}]},'
+        .'[{"name":"wow","type":"changed","value_two_data":"","value_first_data":"so much"}]},'
         .'{"name":"key","type":"no_change","value":"value"},{"name":"ops","type":"added","value":"vops"}]}]}'
         .',{"name":"group1","type":"parent","child":'
-        .'[{"name":"baz","type":"changed","value_last_data":"bas","value_first_data":"bars"},'
+        .'[{"name":"baz","type":"changed","value_two_data":"bas","value_first_data":"bars"},'
         .'{"name":"foo","type":"no_change","value":"bar"},'
-        .'{"name":"nest","type":"changed","value_last_data":{"key":"value"},"value_first_data":"str"}]},'
+        .'{"name":"nest","type":"changed","value_two_data":{"key":"value"},"value_first_data":"str"}]},'
         .'{"name":"group2","type":"deleted","value":{"abc":12345,"deep":{"id":45}}},'
         .'{"name":"group3","type":"added","value":{"deep":{"id":{"number":45}},"fee":100500}}]';
 
@@ -163,14 +164,16 @@ class DifferTest extends TestCase
 
 
 
-//    public function testGendiff()
-//    {
-//        $result = genDiff(
-//            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
-//            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
-//        );
-//        $this->assertEquals($this->testGendiff, $result);
-//    }
+    public function testGendiff()
+    {
+        $fileData1 = getFileData(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'));
+        $fileData2 = getFileData(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'));
+        $result = genDiff(
+            $fileData1,
+            $fileData2,
+        );
+        $this->assertEquals($this->testGendiff, $result);
+    }
 
     public function testGendiffPlain()
     {

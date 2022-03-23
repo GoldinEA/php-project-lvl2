@@ -16,17 +16,17 @@ function format(array $tree, int $step = 1, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                if (is_array($treeElement['value_last_data']) || is_array($treeElement['value_first_data'])) {
-                    $strAdded = is_array($treeElement['value_last_data'])
+                if (is_array($treeElement['value_two_data']) || is_array($treeElement['value_first_data'])) {
+                    $strAdded = is_array($treeElement['value_two_data'])
                         ? "[complex value]"
-                        : createStringResult($treeElement['value_last_data']);
+                        : createStringResult($treeElement['value_two_data']);
                     $strDeleted = is_array($treeElement['value_first_data'])
                         ? "[complex value]"
                         : createStringResult($treeElement['value_first_data']);
                     return "Property '$name' was updated. From $strDeleted to $strAdded";
                 }
                 $deleted = createStringResult($treeElement['value_first_data']);
-                $added = createStringResult($treeElement['value_last_data']);
+                $added = createStringResult($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $deleted to $added";
             case 'deleted':
                 if (is_array($treeElement['value']) ?? false) {
