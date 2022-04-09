@@ -10,188 +10,58 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 class DifferTest extends TestCase
 {
-    private array $dataFirstFile = [
-        'host' => 'hexlet.io',
-        'timeout' => 50,
-        'proxy' => '123.234.53.22',
-        'follow' => false
-    ];
 
-    private array $dataLastFile = [
-        'host' => 'hexlet.io',
-        'timeout' => 20,
-        'verbose' => true
-    ];
+    private const FILE_PATH_JSON_1 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json';
+    private const FILE_PATH_JSON_2 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json';
 
-    private array $dataLastFileMultilevel = [
-        'common' => [
-            'follow' => false,
-            'setting1' => 'Value 1',
-            'setting3' => null,
-            'setting4' => "blah blah",
-            "setting5" => [
-                "key5" => "value5"
-            ],
-            "setting6" => [
-                "key" => "value",
-                "ops" => "vops",
-                "doge" => [
-                    "wow" => "so much"
-                ]
-            ]
-        ],
-        'group1' => [
-            "foo" => "bar",
-            "baz" => "bars",
-            "nest" => "str"
-        ],
-        'group3' => [
-            "deep" => [
-                "id" => [
-                    "number" => 45
-                ]
-            ],
-            "fee" => 100500
-        ],
-    ];
+    private const FILE_PATH_YAML_1 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.yml';
+    private const FILE_PATH_YAML_2 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.yml';
 
-    private array $dataFirstFileMultilevel = [
-        "common" => [
-            "setting1" => "Value 1",
-            "setting2" => 200,
-            "setting3" => true,
-            "setting6" => [
-                "key" => "value",
-                "doge" => [
-                    "wow" => ""
-                ]
-            ]
-        ],
-        "group1" => [
-            "baz" => "bas",
-            "foo" => "bar",
-            "nest" => [
-                "key" => "value"
-            ]
-        ],
-        "group2" => [
-            "abc" => 12345,
-            "deep" => [
-                "id" => 45
-            ]
-        ]
-    ];
-
-    private string $testJson =
-        '[{"name":"common","type":"parent",'
-        .'"child":[{"name":"follow","type":"added","value":false},'
-        .'{"name":"setting1","type":"no_change","value":"Value 1"},'
-        .'{"name":"setting2","type":"deleted","value":200},'
-        .'{"name":"setting3","type":"changed","value_two_data":true,"value_first_data":null},'
-        .'{"name":"setting4","type":"added","value":"blah blah"},'
-        .'{"name":"setting5","type":"added","value":{"key5":"value5"}},'
-        .'{"name":"setting6","type":"parent","child":'
-        .'[{"name":"doge","type":"parent","child":'
-        .'[{"name":"wow","type":"changed","value_two_data":"","value_first_data":"so much"}]},'
-        .'{"name":"key","type":"no_change","value":"value"},{"name":"ops","type":"added","value":"vops"}]}]}'
-        .',{"name":"group1","type":"parent","child":'
-        .'[{"name":"baz","type":"changed","value_two_data":"bas","value_first_data":"bars"},'
-        .'{"name":"foo","type":"no_change","value":"bar"},'
-        .'{"name":"nest","type":"changed","value_two_data":{"key":"value"},"value_first_data":"str"}]},'
-        .'{"name":"group2","type":"deleted","value":{"abc":12345,"deep":{"id":45}}},'
-        .'{"name":"group3","type":"added","value":{"deep":{"id":{"number":45}},"fee":100500}}]';
-
-
-    private string $testGendiff =
-        '{' . PHP_EOL .
-        '    common: {' . PHP_EOL .
-        '      + follow: false' . PHP_EOL .
-        '        setting1: Value 1' . PHP_EOL .
-        '      - setting2: 200' . PHP_EOL .
-        '      - setting3: true' . PHP_EOL .
-        '      + setting3: null' . PHP_EOL .
-        '      + setting4: blah blah' . PHP_EOL .
-        '      + setting5: {' . PHP_EOL .
-        '            key5: value5' . PHP_EOL .
-        '        }' . PHP_EOL .
-        '        setting6: {' . PHP_EOL .
-        '            doge: {' . PHP_EOL .
-        '              - wow: ' . PHP_EOL .
-        '              + wow: so much' . PHP_EOL .
-        '            }' . PHP_EOL .
-        '            key: value' . PHP_EOL .
-        '          + ops: vops' . PHP_EOL .
-        '        }' . PHP_EOL .
-        '    }' . PHP_EOL .
-        '    group1: {' . PHP_EOL .
-        '      - baz: bas' . PHP_EOL .
-        '      + baz: bars' . PHP_EOL .
-        '        foo: bar' . PHP_EOL .
-        '      - nest: {' . PHP_EOL .
-        '          key: value' . PHP_EOL .
-        '        }' . PHP_EOL .
-        '      + nest: str' . PHP_EOL .
-        '    }' . PHP_EOL .
-        '  - group2: {' . PHP_EOL .
-        '        abc: 12345' . PHP_EOL .
-        '        deep: {' . PHP_EOL .
-        '            id: 45' . PHP_EOL .
-        '        }' . PHP_EOL .
-        '    }' . PHP_EOL .
-        '  + group3: {' . PHP_EOL .
-        '        deep: {' . PHP_EOL .
-        '            id: {' . PHP_EOL .
-        '                number: 45' . PHP_EOL .
-        '            }' . PHP_EOL .
-        '        }' . PHP_EOL .
-        '        fee: 100500' . PHP_EOL .
-        '    }' . PHP_EOL .
-        '}';
-
-    private string $testPlain =
-        "Property 'follow' was added with value: false" . PHP_EOL .
-        "Property 'setting2' was removed" . PHP_EOL .
-        "Property 'setting3' was updated. From null to true" . PHP_EOL .
-        "Property 'setting4' was added with value: 'blah blah'" . PHP_EOL .
-        "Property 'setting5' was added with value: [complex value]" . PHP_EOL .
-        "Property 'wow' was updated. From 'so much' to ''" . PHP_EOL .
-        "Property 'ops' was added with value: 'vops'" . PHP_EOL .
-        "Property 'baz' was updated. From 'bars' to 'bas'" . PHP_EOL .
-        "Property 'nest' was updated. From 'str' to [complex value]" . PHP_EOL .
-        "Property 'group2' was removed" . PHP_EOL .
-        "Property 'group3' was added with value: [complex value]";
-
-
-
-
-    public function testGendiff()
+    /**
+     * @dataProvider filesProvider
+     */
+    public function testJson($format, $testRes)
     {
-        $fileData1 = getFileData(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'));
-        $fileData2 = getFileData(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'));
+        $fileData1 = getFileData(
+            realpath(self::FILE_PATH_JSON_1)
+        );
+        $fileData2 = getFileData(
+            realpath(self::FILE_PATH_JSON_2)
+        );
         $result = genDiff(
             $fileData1,
             $fileData2,
+            $format
         );
-        $this->assertEquals($this->testGendiff, $result);
+        $this->assertEquals(str_replace("\r\n", PHP_EOL, $testRes), str_replace("\r\n", PHP_EOL, $result));
     }
 
-    public function testGendiffPlain()
+    /**
+     * @dataProvider filesProvider
+     */
+    public function testYaml($format, $testRes)
     {
-        $result = genDiff(
-            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
-            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
-            'plain'
+        $fileData1 = getFileData(
+            realpath(self::FILE_PATH_YAML_1)
         );
-        $this->assertEquals($this->testPlain, $result);
+        $fileData2 = getFileData(
+            realpath(self::FILE_PATH_YAML_2)
+        );
+        $result = genDiff(
+            $fileData1,
+            $fileData2,
+            $format
+        );
+        $this->assertEquals(str_replace("\r\n", PHP_EOL, $testRes), str_replace("\r\n", PHP_EOL, $result));
     }
 
-    public function testGendiffJson()
+
+    public function filesProvider()
     {
-        $result = genDiff(
-            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json'),
-            realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json'),
-            'json'
-        );
-        $this->assertEquals($this->testJson, $result);
+        return [
+            'stylish format' => ['stylish', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result'. DIRECTORY_SEPARATOR . 'result.stylish'))],
+            'plain format' => ['plain', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result'. DIRECTORY_SEPARATOR . 'result.plain'))],
+            'json format' => ['json', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result'. DIRECTORY_SEPARATOR . 'result.json'))]
+        ];
     }
 }
