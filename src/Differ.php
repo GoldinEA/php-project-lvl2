@@ -5,15 +5,29 @@ namespace Differ\Differ;
 
 use Exception;
 use function Differ\Format\format;
+use function Differ\Parsers\getFileData;
 use function Funct\Collection\sortBy;
 use function Funct\Collection\union;
 
 /**
  * @throws Exception Стандартное исключение.
  */
-function genDiff(array $dataFile1, array $dataFile2, string $format = 'stylish'): string
+function genDiff(string $directory1, string $directory2, string $format = 'stylish'): string
 {
-    $tree = buildDiff($dataFile1, $dataFile2);
+
+    try {
+        $fileData1 = getFileData($directory1);
+    } catch (Exception $e) {
+        throw new Exception("$directory1 nothing file in directory.");
+    }
+
+    try {
+        $fileData2 = getFileData($directory2);
+    } catch (Exception $e) {
+        throw new Exception("$directory2 nothing file in directory.");
+    }
+
+    $tree = buildDiff($fileData1, $fileData2);
     return format($tree, $format);
 }
 
