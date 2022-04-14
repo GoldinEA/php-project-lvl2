@@ -23,11 +23,11 @@ function format(array $tree, int $step = 1, array $structureName = []): string
                     $strDeleted = is_array($treeElement['value_first_data'])
                         ? "[complex value]"
                         : createStringResult($treeElement['value_first_data']);
-                    return "Property '$name' was updated. From $strDeleted to $strAdded";
+                    return "Property '$name' was updated. From $strAdded to $strDeleted";
                 }
                 $deleted = createStringResult($treeElement['value_first_data']);
                 $added = createStringResult($treeElement['value_two_data']);
-                return "Property '$name' was $status. From $deleted to $added";
+                return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
                 if (is_array($treeElement['value']) ?? false) {
                     return "Property '$name' was $status" . PHP_EOL;
@@ -40,7 +40,7 @@ function format(array $tree, int $step = 1, array $structureName = []): string
                 }
                 return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
             case 'parent':
-                return format($treeElement['child'], $step + 1);
+                return format($treeElement['child'], $step + 1, $structureName);
         }
     }, $tree);
     $clearData = clearResult($formattedTree);
