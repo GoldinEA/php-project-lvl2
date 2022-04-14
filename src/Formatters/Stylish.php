@@ -37,9 +37,9 @@ function createChild(array $value, int $depth): array
     }, $keys, $values);
 }
 
-function createSpaces(int $step): string
+function createSpaces(int $depth): string
 {
-    return str_repeat("    ", $step);
+    return str_repeat("    ", $depth);
 }
 
 /**

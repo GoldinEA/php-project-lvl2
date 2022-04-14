@@ -5,10 +5,10 @@ namespace Differ\Formatters\Plain;
 
 use const Differ\Format\BOOL_ARRAY;
 
-function format(array $tree, int $step = 1, array $structureName = []): string
+function format(array $tree, int $depth = 1, array $structureName = []): string
 {
-    $formattedTree = array_map(function ($treeElement) use ($step, $structureName) {
-        $structureName[$step] = $treeElement['name'];
+    $formattedTree = array_map(function ($treeElement) use ($depth, $structureName) {
+        $structureName[$depth] = $treeElement['name'];
         $name = !empty($structureName)
             ? implode('.', $structureName)
             : $treeElement['name'];
@@ -40,7 +40,7 @@ function format(array $tree, int $step = 1, array $structureName = []): string
                 }
                 return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
             case 'parent':
-                return format($treeElement['child'], $step + 1, $structureName);
+                return format($treeElement['child'], $depth + 1, $structureName);
         }
     }, $tree);
     $clearData = clearResult($formattedTree);
