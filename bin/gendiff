@@ -36,5 +36,5 @@ $directory2 = '..' . DIRECTORY_SEPARATOR . $args->args['<secondFile>'];
 try {
     echo genDiff($directory1, $directory2, $args->args['--format']);
 } catch (Exception $e) {
-    echo $e->getMessage();
+    throw new Exception($e->getMessage());
 }
