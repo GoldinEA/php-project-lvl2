@@ -13,27 +13,27 @@ function createString(string $name, string $value, int $depth, string $char): st
     return substr(createSpaces($depth), 2) . "$char $name: " . $value;
 }
 
-function convertToString(mixed $value, int $step): string
+function convertToString(mixed $value, int $depth): string
 {
     return match (true) {
         is_array($value) => '{' . PHP_EOL . implode(
             PHP_EOL,
-            createChild($value, $step)
-        ) . PHP_EOL. createSpaces($step) . '}',
+            createChild($value, $depth)
+        ) . PHP_EOL. createSpaces($depth) . '}',
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,
     };
 }
 
-function createChild(array $value, int $step): array
+function createChild(array $value, int $depth): array
 {
     $keys = array_keys($value);
     $values = array_values($value);
-    return array_map(function ($key, $value) use ($step) {
-        $spaces = createSpaces($step);
-        $convertedValue = convertToString($value, $step + 1);
-        return "$spaces  $key: $convertedValue";
+    return array_map(function ($key, $value) use ($depth) {
+        $spaces = createSpaces($depth);
+        $convertedValue = convertToString($value, $depth + 1);
+        return "   $spaces $key: $convertedValue";
     }, $keys, $values);
 }
 
@@ -53,13 +53,12 @@ function format(array $tree, int $depth = 1): string
             $elementType = $treeElement['type'];
             switch ($elementType) {
                 case 'parent':
-                    $parentResult = createString(
+                    return createString(
                         $elementName,
                         format($treeElement['child'], $depth + 1),
                         $depth,
                         ' '
                     );
-                    return str_repeat(' ', $depth) . $parentResult;
                 case 'changed':
                     return createString(
                         $elementName,
