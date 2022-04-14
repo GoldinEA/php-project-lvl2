@@ -17,7 +17,7 @@ Usage:
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  --format <fmt>                Report format [default: json]
+  --format <fmt>                Report format [default: stylish]
 
 DOCOPT;
 
