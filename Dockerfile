@@ -1,4 +1,4 @@
-FROM php:8.0.3-cli
+FROM php:8.1.4-cli
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug \
@@ -17,8 +17,6 @@ RUN apt-get update && apt-get upgrade -y \
 #    Чистим временные файлы
     && docker-php-source delete \
     && apt-get autoremove --purge -y && apt-get autoclean -y && apt-get clean -y \
-
-RUN ["chmod", "+x", "/usr/local/bin/php"]
 
 #    Ставим composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
