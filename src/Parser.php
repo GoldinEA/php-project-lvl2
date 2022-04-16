@@ -19,10 +19,10 @@ function getFileData(string $pathToFile): array
 
     $path = new SplFileInfo($pathToFile);
     $format = $path->getExtension();
-
+    $dataFile = file_get_contents($pathToFile) ?? '';
     return match ($format) {
-        'yaml', 'yml' => Yaml::parseFile($pathToFile) ?? [],
-        'json' => json_decode((string)file_get_contents($pathToFile), true),
+        'yaml', 'yml' => Yaml::parse($dataFile) ?? [],
+        'json' => json_decode($dataFile, true),
         default => throw new Exception("Format file $format not found."),
     };
 }
