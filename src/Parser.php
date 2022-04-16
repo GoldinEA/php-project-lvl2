@@ -22,9 +22,13 @@ function getFileData(string $pathToFile): array
     $format = $path->getExtension();
     $dataFile = file_get_contents($pathToFile);
 
+    if (gettype($format) === 'boolean') {
+        return [];
+    }
+
     return match ($format) {
-        'yaml', 'yml' => gettype($format) !== 'boolean' ? Yaml::parse($dataFile) : [],
-        'json' => gettype($format) !== 'boolean' ? json_decode($dataFile, true) : [],
+        'yaml', 'yml' => Yaml::parse($dataFile),
+        'json' => json_decode($dataFile, true),
         default => throw new Exception("Format file $format not found."),
     };
 }
