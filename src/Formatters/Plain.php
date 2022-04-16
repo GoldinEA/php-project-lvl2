@@ -10,7 +10,7 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($depth, $structureName) {
         $structureName[$depth] = $treeElement['name'];
-        $name = !empty($structureName)
+        $name = count($structureName) > 1
             ? implode('.', $structureName)
             : $treeElement['name'];
         $status = getPlainStatus($treeElement['type']);
