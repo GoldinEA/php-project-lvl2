@@ -14,9 +14,9 @@
     ],
     "require": {
         "docopt/docopt": "^1.0",
-        "funct/funct": "^1.5",
         "symfony/yaml": "^5.3",
-        "phpstan/phpstan": "1.2.0"
+        "phpstan/phpstan": "1.2.0",
+        "lstrojny/functional-php": "^1.17"
     },
     "autoload": {
         "files": [

@@ -6,8 +6,7 @@ namespace Differ\Differ;
 use Exception;
 use function Differ\Format\format;
 use function Differ\Parsers\getFileData;
-use function Funct\Collection\sortBy;
-use function Funct\Collection\union;
+use function Functional\sort;
 
 /**
  * @throws Exception Стандартное исключение.
@@ -35,10 +34,12 @@ function buildDiff(array $dataOne, array $dataTwo): array
 {
     $keysFirst = array_keys($dataOne);
     $keysLast = array_keys($dataTwo);
-    $allKeys = union($keysFirst, $keysLast);
-    $allKeysSorted = sortBy($allKeys, function ($num) {
-        return $num;
-    });
+    $allKeys = array_unique(array_merge($keysFirst, $keysLast));
+    $allKeysSorted = sort(
+        $allKeys,
+        fn($left, $right) => $left <=> $right,
+        true
+    );
 
     $result = array_map(function ($key) use ($dataOne, $dataTwo) {
         $valueOne = $dataOne[$key] ?? null;
