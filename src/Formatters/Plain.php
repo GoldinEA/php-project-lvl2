@@ -9,9 +9,12 @@ use const Differ\Format\BOOL_ARRAY;
 function format(array $tree, int $depth = 1, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($depth, $structureName) {
-        $structureName[$depth] = $treeElement['name'];
-        $name = count($structureName) > 1
-            ? implode('.', $structureName)
+        $newLevelName = [
+            $depth => $treeElement['name']
+        ];
+        $allLevels = array_merge($structureName, $newLevelName);
+        $name = count($allLevels) > 1
+            ? implode('.', $allLevels)
             : $treeElement['name'];
         $status = getPlainStatus($treeElement['type']);
 
@@ -41,7 +44,7 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
                 }
                 return "Property '$name' was $status with value: " . createStringResult($treeElement['value']);
             case 'parent':
-                return format($treeElement['child'], $depth + 1, $structureName);
+                return format($treeElement['child'], $depth + 1, $allLevels);
         }
     }, $tree);
     $clearData = clearResult($formattedTree);
