@@ -73,7 +73,7 @@ function format(array $tree, int $depth = 1): string
                             $depth,
                             '+'
                         );
-                case in_array($elementType, ['deleted', 'added', 'no_change']):
+                case in_array($elementType, ['deleted', 'added', 'no_change'], false):
                     $char = createChar($elementType);
                     return createString(
                         $elementName,

@@ -21,8 +21,8 @@ function getFileData(string $pathToFile): array
     $format = $path->getExtension();
 
     return match ($format) {
-        'yaml', 'yml' => Yaml::parseFile($pathToFile) ?? [],
-        'json' => json_decode(file_get_contents($pathToFile), true) ?? [],
+        'yaml', 'yml' => Yaml::parseFile($pathToFile),
+        'json' => json_decode(file_get_contents($pathToFile), true),
         default => throw new Exception("Format file $format not found."),
     };
 }
