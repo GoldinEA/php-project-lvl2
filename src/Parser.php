@@ -22,7 +22,7 @@ function getFileData(string $pathToFile): array
 
     return match ($format) {
         'yaml', 'yml' => Yaml::parseFile($pathToFile) ?? [],
-        'json' => json_decode(file_get_contents($pathToFile) ?? '', true) ?? [],
+        'json' => json_decode((string)file_get_contents($pathToFile), true),
         default => throw new Exception("Format file $format not found."),
     };
 }
