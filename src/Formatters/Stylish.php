@@ -5,6 +5,7 @@ namespace Differ\Formatters\Stylish;
 
 use Exception;
 use JetBrains\PhpStorm\Pure;
+
 use const Differ\Format\BOOL_ARRAY;
 
 #[Pure]
@@ -19,7 +20,7 @@ function convertToString(mixed $value, int $depth): string
         is_array($value) => '{' . PHP_EOL . implode(
             PHP_EOL,
             createChild($value, $depth)
-        ) . PHP_EOL. createSpaces($depth) . '}',
+        ) . PHP_EOL . createSpaces($depth) . '}',
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,

@@ -9,7 +9,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 class DifferTest extends TestCase
 {
-
     private const FILE_PATH_JSON_1 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file.json';
     private const FILE_PATH_JSON_2 = __DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'file1.json';
 

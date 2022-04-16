@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Differ\Differ;
 
 use Exception;
+
 use function Differ\Format\format;
 use function Differ\Parsers\getFileData;
 use function Functional\sort;
