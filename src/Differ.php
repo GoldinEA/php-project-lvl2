@@ -87,5 +87,5 @@ function buildDiff(array $dataOne, array $dataTwo): array
             'value' => $valueOne,
         ];
     }, $allKeysSorted);
-    return array_values($result) ?? [];
+    return array_values($result);
 }

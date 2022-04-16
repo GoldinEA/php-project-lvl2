@@ -30,12 +30,12 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
                 $added = createStringResult($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
-                if (is_array($treeElement['value']) ?? false) {
+                if (is_array($treeElement['value'])) {
                     return "Property '$name' was $status" . PHP_EOL;
                 }
                 return "Property '$name' was $status";
             case 'added':
-                if (is_array($treeElement['value']) ?? false) {
+                if (is_array($treeElement['value'])) {
                     $startLine = " with value: [complex value]";
                     return "Property '$name' was $status" . $startLine . PHP_EOL;
                 }

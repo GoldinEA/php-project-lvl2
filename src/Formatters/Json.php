@@ -6,5 +6,5 @@ namespace Differ\Formatters\Json;
 
 function format(array $tree): string
 {
-    return json_encode($tree) ?? '';
+    return json_encode($tree);
 }
