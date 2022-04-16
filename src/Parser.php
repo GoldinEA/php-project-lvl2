@@ -26,5 +26,5 @@ function getFileData(string $pathToFile): array
             'yaml', 'yml' => Yaml::parse($dataFile),
             'json' => json_decode($dataFile, true),
             default => throw new Exception("Format file $format not found."),
-        };
+    };
 }
