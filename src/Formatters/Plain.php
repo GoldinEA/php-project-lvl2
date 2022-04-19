@@ -112,7 +112,6 @@ class Truncater
         $this->optionSeparator = $options['separator'] ?? self::OPTIONS['separator'];
 
         if (strlen($text) > $this->optionLength) {
-            echo strlen($text) .' > ' . $this->optionLength . PHP_EOL;
             return substr($text, 0, $this->optionLength) . $this->optionSeparator;
         }
         return $text;
