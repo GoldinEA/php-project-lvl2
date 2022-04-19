@@ -72,7 +72,7 @@ function format(array $tree, int $depth = 1): string
                             $depth,
                             '+'
                         );
-                case in_array($elementType, ['deleted', 'added', 'no_change'], true):
+                default:
                     $char = createChar($elementType);
                     return createString(
                         $elementName,
@@ -80,8 +80,6 @@ function format(array $tree, int $depth = 1): string
                         $depth,
                         $char
                     );
-                default:
-                    throw new Exception("$elementType is undefined.");
             }
         },
         $tree
