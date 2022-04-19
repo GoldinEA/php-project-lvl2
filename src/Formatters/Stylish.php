@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Differ\Formatters\Stylish;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 use const Differ\Format\BOOL_ARRAY;
 

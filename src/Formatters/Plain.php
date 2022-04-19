@@ -84,3 +84,40 @@ function convertToString(mixed $value): string
         default => (string)$value,
     };
 }
+
+
+namespace App;
+
+class Truncater
+{
+    public const OPTIONS = [
+        'separator' => '...',
+        'length' => 200,
+    ];
+
+    private int $optionLength = 200;
+
+    private string $optionSeparator = '...';
+
+    public function __construct(array $options = [])
+    {
+        $this->optionLength = $options['length'] ?? self::OPTIONS['length'];
+        $this->optionSeparator = $options['separator'] ?? self::OPTIONS['separator'];
+    }
+
+    // BEGIN (write your solution here)
+    public function truncate(string $text, array $options = []): string
+    {
+        $this->optionLength = $options['length'] ?? self::OPTIONS['length'];
+        $this->optionSeparator = $options['separator'] ?? self::OPTIONS['separator'];
+
+        if (strlen($text) > $this->optionLength) {
+            echo strlen($text) .' > ' . $this->optionLength . PHP_EOL;
+            return substr($text, 0, $this->optionLength) . $this->optionSeparator;
+        }
+        return $text;
+    }
+    // END
+}
+$truncater = new Truncater(['length' => 3]);
+$actual = $truncater->truncate('one two');

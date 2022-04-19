@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Differ\Parsers;
 
 use Exception;
-use phpDocumentor\Reflection\Types\Boolean;
 use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 

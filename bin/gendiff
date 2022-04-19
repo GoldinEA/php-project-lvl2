@@ -2,7 +2,6 @@
 
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require(__DIR__ . '/../vendor/docopt/docopt/src/docopt.php');
 
 use function Differ\Differ\genDiff;
 
@@ -23,11 +22,11 @@ DOCOPT;
 $params = array(
     'argv' => array_slice($_SERVER['argv'], 1),
     'help' => true,
-    'version' => null,
+    'version' => '1.0.0',
     'optionsFirst' => false,
 );
 
-$args = Docopt::handle($doc);
+$args = Docopt::handle($doc, $params);
 
 $directory1 = '..' . DIRECTORY_SEPARATOR . $args->args['<firstFile>'];
 $directory2 = '..' . DIRECTORY_SEPARATOR . $args->args['<secondFile>'];

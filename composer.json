@@ -15,7 +15,6 @@
     "require": {
         "docopt/docopt": "^1.0",
         "symfony/yaml": "^5.3",
-        "phpstan/phpstan": "1.2.0",
         "lstrojny/functional-php": "^1.17"
     },
     "autoload": {
@@ -32,6 +31,7 @@
         }
     },
     "require-dev": {
+        "phpstan/phpstan": "1.2.0",
         "phpunit/phpunit": "^9.5",
         "phpstan/phpstan-phpunit": "^1.0.0",
         "phpstan/extension-installer": "^1.0",
