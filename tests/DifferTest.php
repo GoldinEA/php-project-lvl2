@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -18,37 +20,66 @@ class DifferTest extends TestCase
 
     /**
      * @dataProvider filesProvider
+     * @throws \Exception
      */
-    public function testJson($format, $testRes)
+    public function testJson(string $format, string $testRes): void
     {
         $result = genDiff(
             self::FILE_PATH_JSON_1,
             self::FILE_PATH_JSON_2,
             $format
         );
-        $this->assertEquals(str_replace("\r\n", PHP_EOL, $testRes), str_replace("\r\n", PHP_EOL, $result));
+
+        $this->assertFileExists(
+            $testRes,
+            $result
+        );
     }
 
     /**
      * @dataProvider filesProvider
+     * @throws \Exception
      */
-    public function testYaml($format, $testRes)
+    public function testYaml(string $format, string $testRes): void
     {
         $result = genDiff(
             self::FILE_PATH_YAML_1,
             self::FILE_PATH_YAML_2,
             $format
         );
-        $this->assertEquals(str_replace("\r\n", PHP_EOL, $testRes), str_replace("\r\n", PHP_EOL, $result));
+
+        $this->assertFileExists(
+            $testRes,
+            $result
+        );
     }
 
 
-    public function filesProvider()
+    /**
+     * @dataProvider filesProvider
+     * @throws \Exception
+     */
+    public function testYamlJson(string $format, string $testRes): void
+    {
+        $result = genDiff(
+            self::FILE_PATH_YAML_1,
+            self::FILE_PATH_JSON_2,
+            $format
+        );
+
+        $this->assertFileExists(
+            $testRes,
+            $result
+        );
+    }
+
+
+    public function filesProvider(): array
     {
         return [
-            'stylish format' => ['stylish', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.stylish'))],
-            'plain format' => ['plain', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.plain'))],
-            'json format' => ['json', file_get_contents(realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.json'))]
+            'stylish format' => ['stylish', realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.stylish')],
+            'plain format' => ['plain', realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.plain')],
+            'json format' => ['json', realpath(__DIR__ . DIRECTORY_SEPARATOR . 'fixures' . DIRECTORY_SEPARATOR . 'result' . DIRECTORY_SEPARATOR . 'result.json')]
         ];
     }
 }

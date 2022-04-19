@@ -18,7 +18,7 @@ function convertToString(mixed $value, int $depth): string
     return match (true) {
         is_array($value) => '{' . PHP_EOL . implode(
             PHP_EOL,
-            createChild($value, $depth)
+            createDepthValue($value, $depth)
         ) . PHP_EOL . createSpaces($depth) . '}',
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
@@ -26,7 +26,7 @@ function convertToString(mixed $value, int $depth): string
     };
 }
 
-function createChild(array $value, int $depth): array
+function createDepthValue(array $value, int $depth): array
 {
     $keys = array_keys($value);
     $values = array_values($value);
@@ -86,7 +86,7 @@ function format(array $tree, int $depth = 1): string
         },
         $tree
     );
-    $spacesFinal = $depth === 1 ? '' : substr(createSpaces($depth), 4);
+    $spacesFinal = $depth === 1 ? '' : '    ';
     return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . $spacesFinal . '}';
 }
 
