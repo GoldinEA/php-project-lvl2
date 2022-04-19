@@ -68,7 +68,7 @@ function format(array $tree, int $depth = 1): string
                     ) . PHP_EOL
                         . createString(
                             $elementName,
-                            convertToString($treeElement['value_first_data'], $depth),
+                            convertToString($treeElement['value_one_data'], $depth),
                             $depth,
                             '+'
                         );

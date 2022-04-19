@@ -76,7 +76,7 @@ function buildDiff(array $dataOne, array $dataTwo): array
                 'name' => $key,
                 'type' => 'changed',
                 'value_two_data' => $valueOne,
-                'value_first_data' => $valueTwo
+                'value_one_data' => $valueTwo
             ];
         }
 
