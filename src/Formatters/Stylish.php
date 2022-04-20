@@ -82,6 +82,7 @@ function format(array $tree, int $depth = 1): string
         },
         $tree
     );
+    $spacesFinal = $depth === 1 ? '' : createSpaces($depth);
     return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . '}';
 }
 
