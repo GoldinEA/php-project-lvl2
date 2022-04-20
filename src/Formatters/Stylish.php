@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Stylish;
 
-use Exception;
-
 use const Differ\Format\BOOL_ARRAY;
 
 function createString(string $name, string $value, int $depth, string $char): string
@@ -84,8 +82,7 @@ function format(array $tree, int $depth = 1): string
         },
         $tree
     );
-    $spacesFinal = $depth === 1 ? '' : substr(createSpaces($depth), 4);
-    return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . $spacesFinal . '}';
+    return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . '}';
 }
 
 function createChar(string $type): string
