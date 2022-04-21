@@ -33,9 +33,9 @@ composer install
 
 ### Примеры.
 
-#### Сравнение плоских файлов (yaml)
+#### Сравнение файлов (yaml)
 [![asciicast](https://asciinema.org/a/eWLeqfrKg9uhWTLyMB7iodhyS.svg)](https://asciinema.org/a/eWLeqfrKg9uhWTLyMB7iodhyS)
-#### Сравнение плоских файлов (json)
+#### Сравнение файлов (json)
 [![asciicast](https://asciinema.org/a/XwKMPxXDkeYkQGkGzNeQmLCDA.svg)](https://asciinema.org/a/XwKMPxXDkeYkQGkGzNeQmLCDA)
 #### Рекурсивное сравнение
 [![asciicast](https://asciinema.org/a/hUkt9LsabcnucRzhmk6H0cIS9.svg)](https://asciinema.org/a/hUkt9LsabcnucRzhmk6H0cIS9)
