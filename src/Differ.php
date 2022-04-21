@@ -37,7 +37,7 @@ function getFileData(string $pathToFile): array
 
     $path = new SplFileInfo($pathToFile);
     $format = $path->getExtension();
-    return ['data_file' => (string)file_get_contents($pathToFile), 'format' => $format];
+    return [(string)file_get_contents($pathToFile), $format];
 }
 
 function buildDiff(array $dataOne, array $dataTwo): array
