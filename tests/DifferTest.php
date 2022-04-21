@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exception;
-
 use JetBrains\PhpStorm\ArrayShape;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +14,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 class DifferTest extends TestCase
 {
-
     /**
      * @dataProvider filesProvider
      * @throws Exception
