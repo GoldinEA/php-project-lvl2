@@ -47,7 +47,7 @@ class DifferTest extends TestCase
             'json format combo' => ['format' => 'json', 'result.json', 'file1' => 'file.json', 'file2' => 'file1.yml']
         ];
     }
-    
+
     private function createFilePath(string $fileName): string
     {
         return realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', $fileName]));
