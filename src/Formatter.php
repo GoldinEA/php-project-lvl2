@@ -10,8 +10,6 @@ use function Differ\Formatters\Plain\format as formatPlain;
 use function Differ\Formatters\Json\format as formatJson;
 use function Differ\Formatters\Stylish\format as formatStylish;
 
-const BOOL_ARRAY = [true => 'true', false => 'false'];
-
 /**
  * @throws Exception
  */

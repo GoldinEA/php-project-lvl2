@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Stylish;
 
-use const Differ\Format\BOOL_ARRAY;
+const BOOL_ARRAY = [true => 'true', false => 'false'];
 
 function createString(string $name, string $value, int $depth, string $char): string
 {

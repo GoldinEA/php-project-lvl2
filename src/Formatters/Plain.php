@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Plain;
 
-use const Differ\Format\BOOL_ARRAY;
+const BOOL_ARRAY = [true => 'true', false => 'false'];
 
 function format(array $tree, int $depth = 1, array $structureName = []): string
 {
@@ -79,7 +79,7 @@ function clearResult(array $dataDefault): array
 function convertToString(mixed $value): string
 {
     return match (true) {
-        $value === true, $value === false => BOOL_ARRAY[$value],
+        is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,
     };
