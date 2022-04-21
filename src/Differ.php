@@ -16,11 +16,11 @@ use function Functional\sort;
  */
 function genDiff(string $directory1, string $directory2, string $format = 'stylish'): string
 {
-    [$rawText, $fileFormat] = getFileData($directory1);
-    $fileData1 = parse($rawText, $fileFormat);
+    $fileDataRaw1 = getFileData($directory1);
+    $fileData1 = parse($fileDataRaw1['data_file'], $fileDataRaw1['format']);
 
-    [$rawText, $fileFormat] = getFileData($directory2);
-    $fileData2 = parse($rawText, $fileFormat);
+    $fileDataRaw2 = getFileData($directory2);
+    $fileData2 = parse($fileDataRaw2['data_file'], $fileDataRaw2['format']);
 
     $tree = buildDiff($fileData1, $fileData2);
     return format($tree, $format);
@@ -37,7 +37,7 @@ function getFileData(string $pathToFile): array
 
     $path = new SplFileInfo($pathToFile);
     $format = $path->getExtension();
-    return [(string)file_get_contents($pathToFile), $format];
+    return ['data_file' => (string)file_get_contents($pathToFile), 'format' => $format];
 }
 
 function buildDiff(array $dataOne, array $dataTwo): array
