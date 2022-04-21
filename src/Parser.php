@@ -5,25 +5,16 @@ declare(strict_types=1);
 namespace Differ\Parsers;
 
 use Exception;
-use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @throws Exception Стандартное исключение.
  */
-function getFileData(string $pathToFile): array
+function parse(string $data, string $format): array
 {
-    if (!file_exists($pathToFile)) {
-        throw new Exception("File $pathToFile is not found.");
-    }
-
-    $path = new SplFileInfo($pathToFile);
-    $format = $path->getExtension();
-    $dataFile = (string)file_get_contents($pathToFile);
-
     return match ($format) {
-            'yaml', 'yml' => Yaml::parse($dataFile),
-            'json' => json_decode($dataFile, true),
+            'yaml', 'yml' => Yaml::parse($data),
+            'json' => json_decode($data, true),
             default => throw new Exception("Format file $format not found."),
     };
 }

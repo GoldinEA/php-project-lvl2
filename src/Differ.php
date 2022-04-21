@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Differ\Differ;
 
 use Exception;
+use JetBrains\PhpStorm\ArrayShape;
+use SplFileInfo;
 
 use function Differ\Format\format;
-use function Differ\Parsers\getFileData;
+use function Differ\Parsers\parse;
 use function Functional\sort;
 
 /**
@@ -15,21 +17,29 @@ use function Functional\sort;
  */
 function genDiff(string $directory1, string $directory2, string $format = 'stylish'): string
 {
+    ['data_file' => $rawText, 'format' => $fileFormat] = getFileData($directory1);
+    $fileData1 = parse($rawText, $fileFormat);
 
-    try {
-        $fileData1 = getFileData($directory1);
-    } catch (Exception $e) {
-        throw new Exception("$directory1 nothing file in directory.");
-    }
-
-    try {
-        $fileData2 = getFileData($directory2);
-    } catch (Exception $e) {
-        throw new Exception("$directory2 nothing file in directory.");
-    }
+    ['data_file' => $rawText, 'format' => $fileFormat] = getFileData($directory2);
+    $fileData2 = parse($rawText, $fileFormat);
 
     $tree = buildDiff($fileData1, $fileData2);
     return format($tree, $format);
+}
+
+/**
+ * @throws Exception Стандартное исключение.
+ */
+#[ArrayShape(['data_file' => "string", 'format' => "string"])]
+function getFileData(string $pathToFile): array
+{
+    if (!file_exists($pathToFile)) {
+        throw new Exception("File $pathToFile is not found.");
+    }
+
+    $path = new SplFileInfo($pathToFile);
+    $format = $path->getExtension();
+    return ['data_file' => (string)file_get_contents($pathToFile), 'format' => $format];
 }
 
 function buildDiff(array $dataOne, array $dataTwo): array
