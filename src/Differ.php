@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Differ\Differ;
 
 use Exception;
-use JetBrains\PhpStorm\ArrayShape;
 use SplFileInfo;
 
 use function Differ\Format\format;
@@ -17,10 +16,10 @@ use function Functional\sort;
  */
 function genDiff(string $directory1, string $directory2, string $format = 'stylish'): string
 {
-    ['data_file' => $rawText, 'format' => $fileFormat] = getFileData($directory1);
+    [$rawText, $fileFormat] = getFileData($directory1);
     $fileData1 = parse($rawText, $fileFormat);
 
-    ['data_file' => $rawText, 'format' => $fileFormat] = getFileData($directory2);
+    [$rawText, $fileFormat] = getFileData($directory2);
     $fileData2 = parse($rawText, $fileFormat);
 
     $tree = buildDiff($fileData1, $fileData2);
@@ -30,7 +29,6 @@ function genDiff(string $directory1, string $directory2, string $format = 'styli
 /**
  * @throws Exception Стандартное исключение.
  */
-#[ArrayShape(['data_file' => "string", 'format' => "string"])]
 function getFileData(string $pathToFile): array
 {
     if (!file_exists($pathToFile)) {
@@ -49,7 +47,7 @@ function buildDiff(array $dataOne, array $dataTwo): array
     $allKeys = array_unique(array_merge($keysFirst, $keysLast));
     $allKeysSorted = sort(
         $allKeys,
-        fn($left, $right) => $left <=> $right,
+        fn ($left, $right) => $left <=> $right,
         true
     );
 
