@@ -40,7 +40,7 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
                 return format($treeElement['child'], $depth + 1, $allLevels);
         }
     }, $tree);
-    return implode(PHP_EOL, $formattedTree);
+    return implode(PHP_EOL, array_filter($formattedTree));
 }
 
 function getPlainStatus(string $typeElement): string
