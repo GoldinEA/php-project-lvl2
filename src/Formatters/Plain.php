@@ -29,10 +29,7 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
                 $added = convertToString($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
-                if (is_array($treeElement['value'])) {
-                    return "Property '$name' was $status" ;
-                }
-                return "Property '$name' was $status";
+                return "Property '$name' was $status" ;
             case 'added':
                 if (is_array($treeElement['value'])) {
                     $startLine = " with value: [complex value]";
@@ -62,6 +59,6 @@ function convertToString(mixed $value): string
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         is_array($value) => "[complex value]",
-        default => "'" . (string)$value . "'",
+        default => "'$value'",
     };
 }
