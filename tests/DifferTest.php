@@ -10,8 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 use function Differ\Differ\genDiff;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 class DifferTest extends TestCase
 {
     /**
@@ -32,19 +30,74 @@ class DifferTest extends TestCase
         );
     }
 
-    #[ArrayShape(['stylish format json' => "string[]", 'stylish format yaml' => "string[]", 'stylish format combo' => "string[]", 'plain format json' => "string[]", 'plain format yaml' => "string[]", 'plain format combo' => "string[]", 'json format json' => "string[]", 'json format yaml' => "string[]", 'json format combo' => "string[]"])]
+    #[ArrayShape([
+        'stylish format json' => "array",
+        'stylish format yaml' => "array",
+        'stylish format combo' => "array",
+        'plain format json' => "array",
+        'plain format yaml' => "array",
+        'plain format combo' => "array",
+        'json format json' => "array",
+        'json format yaml' => "array",
+        'json format combo' => "array"])
+    ]
     public function filesProvider(): array
     {
         return [
-            'stylish format json' => ['format' => 'stylish', 'expected' => 'result.stylish', 'file1' => 'file.json', 'file2' => 'file1.json'],
-            'stylish format yaml' => ['stylish', 'expected' => 'result.stylish', 'file1' => 'file.yml', 'file2' => 'file1.yml'],
-            'stylish format combo' => ['stylish', 'expected' => 'result.stylish', 'file1' => 'file.json', 'file2' => 'file1.yml'],
-            'plain format json' => ['format' => 'plain', 'result.plain', 'file1' => 'file.json', 'file2' => 'file1.json'],
-            'plain format yaml' => ['format' => 'plain', 'result.plain', 'file1' => 'file.yml', 'file2' => 'file1.yml'],
-            'plain format combo' => ['format' => 'plain', 'result.plain', 'file1' => 'file.json', 'file2' => 'file1.yml'],
-            'json format json' => ['format' => 'json', 'result.json', 'file1' => 'file.json', 'file2' => 'file1.json'],
-            'json format yaml' => ['format' => 'json', 'result.json', 'file1' => 'file.yml', 'file2' => 'file1.yml'],
-            'json format combo' => ['format' => 'json', 'result.json', 'file1' => 'file.json', 'file2' => 'file1.yml']
+            'stylish format json' => [
+                'format' => 'stylish',
+                'expected' => 'result.stylish',
+                'file1' => 'file.json',
+                'file2' => 'file1.json'
+            ],
+            'stylish format yaml' => [
+                'format' => 'stylish',
+                'expected' => 'result.stylish',
+                'file1' => 'file.yml',
+                'file2' => 'file1.yml'
+            ],
+            'stylish format combo' => [
+                'format' => 'stylish',
+                'expected' => 'result.stylish',
+                'file1' => 'file.json',
+                'file2' => 'file1.yml'
+            ],
+            'plain format json' => [
+                'format' => 'plain',
+                'expected' => 'result.plain',
+                'file1' => 'file.json',
+                'file2' => 'file1.json'
+            ],
+            'plain format yaml' => [
+                'format' => 'plain',
+                'expected' => 'result.plain',
+                'file1' => 'file.yml',
+                'file2' => 'file1.yml'
+            ],
+            'plain format combo' => [
+                'format' => 'plain',
+                'expected' => 'result.plain',
+                'file1' => 'file.json',
+                'file2' => 'file1.yml'
+            ],
+            'json format json' => [
+                'format' => 'json',
+                'expected' => 'result.json',
+                'file1' => 'file.json',
+                'file2' => 'file1.json'
+            ],
+            'json format yaml' => [
+                'format' => 'json',
+                'expected' => 'result.json',
+                'file1' => 'file.yml',
+                'file2' => 'file1.yml'
+            ],
+            'json format combo' => [
+                'format' => 'json',
+                'expected' => 'result.json',
+                'file1' => 'file.json',
+                'file2' => 'file1.yml'
+            ]
         ];
     }
 

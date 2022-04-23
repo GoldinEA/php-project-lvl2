@@ -16,7 +16,7 @@ function convertToString(mixed $value, int $depth): string
     return match (true) {
         is_array($value) => '{' . PHP_EOL . implode(
             PHP_EOL,
-            createDepthValue($value, $depth)
+            createValue($value, $depth)
         ) . PHP_EOL . createSpaces($depth) . '}',
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
@@ -24,7 +24,7 @@ function convertToString(mixed $value, int $depth): string
     };
 }
 
-function createDepthValue(array $value, int $depth): array
+function createValue(array $value, int $depth): array
 {
     $keys = array_keys($value);
     $values = array_values($value);
@@ -55,28 +55,27 @@ function format(array $tree, int $depth = 1): string
                         $elementName,
                         format($treeElement['child'], $depth + 1),
                         $depth,
-                        ' '
+                        createChar($elementType)
                     );
                 case 'changed':
                     return createString(
                         $elementName,
                         convertToString($treeElement['value_two_data'], $depth),
                         $depth,
-                        '-'
+                        createChar('deleted')
                     ) . PHP_EOL
                         . createString(
                             $elementName,
                             convertToString($treeElement['value_one_data'], $depth),
                             $depth,
-                            '+'
+                            createChar('added')
                         );
                 default:
-                    $char = createChar($elementType);
                     return createString(
                         $elementName,
                         convertToString($treeElement['value'], $depth),
                         $depth,
-                        $char
+                        createChar($elementType)
                     );
             }
         },
@@ -84,6 +83,11 @@ function format(array $tree, int $depth = 1): string
     );
     $spacesFinal = $depth === 1 ? '' : createSpaces($depth - 1);
     return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . $spacesFinal . '}';
+}
+
+function createElement(): string
+{
+
 }
 
 function createChar(string $type): string
