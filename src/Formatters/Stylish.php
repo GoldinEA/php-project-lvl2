@@ -49,35 +49,32 @@ function format(array $tree, int $depth = 1): string
         function ($treeElement) use ($depth) {
             $elementName = $treeElement['name'];
             $elementType = $treeElement['type'];
-            switch ($elementType) {
-                case 'parent':
-                    return createString(
+            return match ($elementType) {
+                'parent' => createString(
+                    $elementName,
+                    format($treeElement['child'], $depth + 1),
+                    $depth,
+                    createChar($elementType)
+                ),
+                'changed' => createString(
+                    $elementName,
+                    convertToString($treeElement['value_two_data'], $depth),
+                    $depth,
+                    createChar('deleted')
+                ) . PHP_EOL
+                    . createString(
                         $elementName,
-                        format($treeElement['child'], $depth + 1),
+                        convertToString($treeElement['value_one_data'], $depth),
                         $depth,
-                        createChar($elementType)
-                    );
-                case 'changed':
-                    return createString(
-                        $elementName,
-                        convertToString($treeElement['value_two_data'], $depth),
-                        $depth,
-                        createChar('deleted')
-                    ) . PHP_EOL
-                        . createString(
-                            $elementName,
-                            convertToString($treeElement['value_one_data'], $depth),
-                            $depth,
-                            createChar('added')
-                        );
-                default:
-                    return createString(
-                        $elementName,
-                        convertToString($treeElement['value'], $depth),
-                        $depth,
-                        createChar($elementType)
-                    );
-            }
+                        createChar('added')
+                    ),
+                default => createString(
+                    $elementName,
+                    convertToString($treeElement['value'], $depth),
+                    $depth,
+                    createChar($elementType)
+                ),
+            };
         },
         $tree
     );
