@@ -6,16 +6,12 @@ namespace Differ\Formatters\Plain;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
-function format(array $tree, int $depth = 1, array $structureName = []): string
+function format(array $tree, array $structureName = []): string
 {
-    $formattedTree = array_map(function ($treeElement) use ($depth, $structureName) {
-        $newLevelName = [
-            $depth => $treeElement['name']
-        ];
+    $formattedTree = array_map(function ($treeElement) use ($structureName) {
+        $newLevelName[] =  $treeElement['name'];
         $allLevels = array_merge($structureName, $newLevelName);
-        $name = count($allLevels) > 1
-            ? implode('.', $allLevels)
-            : $treeElement['name'];
+        $name = implode('.', $allLevels);
         $status = getPlainStatus($treeElement['type']);
 
         switch ($treeElement['type']) {
@@ -28,7 +24,7 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
             case 'added':
                 return "Property '$name' was $status with value: " . convertToString($treeElement['value']);
             case 'parent':
-                return format($treeElement['child'], $depth + 1, $allLevels);
+                return format($treeElement['child'], $allLevels);
         }
     }, $tree);
     return implode(PHP_EOL, array_filter($formattedTree));
