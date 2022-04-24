@@ -20,21 +20,12 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                if (is_array($treeElement['value_two_data']) || is_array($treeElement['value_one_data'])) {
-                    $strAdded = convertToString($treeElement['value_two_data']);
-                    $strDeleted = convertToString($treeElement['value_one_data']);
-                    return "Property '$name' was updated. From $strAdded to $strDeleted";
-                }
                 $deleted = convertToString($treeElement['value_one_data']);
                 $added = convertToString($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
                 return "Property '$name' was $status" ;
             case 'added':
-                if (is_array($treeElement['value'])) {
-                    $startLine = " with value: [complex value]";
-                    return "Property '$name' was $status" . $startLine;
-                }
                 return "Property '$name' was $status with value: " . convertToString($treeElement['value']);
             case 'parent':
                 return format($treeElement['child'], $depth + 1, $allLevels);
