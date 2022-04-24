@@ -8,12 +8,11 @@ use function PHPUnit\Framework\isNull;
 
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
-function format(array $tree, string $structureName = ''): string
+function format(array $tree, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($structureName) {
-        $name = $structureName !== ''
-            ? $structureName . '.' . $treeElement['name']
-            : $treeElement['name'];
+        $allLevels = array_merge($structureName, [$treeElement['name']]);
+        $name = implode('.', $allLevels);
         $status = getStatus($treeElement['type']);
 
         switch ($treeElement['type']) {
@@ -26,7 +25,7 @@ function format(array $tree, string $structureName = ''): string
             case 'added':
                 return "Property '$name' was $status with value: " . convertToString($treeElement['value']);
             case 'parent':
-                return format($treeElement['child'], $name);
+                return format($treeElement['child'], $allLevels);
         }
     }, $tree);
     return implode(PHP_EOL, array_filter($formattedTree));
