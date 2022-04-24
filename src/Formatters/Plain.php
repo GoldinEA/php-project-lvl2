@@ -20,12 +20,8 @@ function format(array $tree, int $depth = 1, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                $deleted = is_int($treeElement['value_one_data'])
-                    ? "'" . convertToString($treeElement['value_one_data']) . "'"
-                    : convertToString($treeElement['value_one_data']);
-                $added = is_int($treeElement['value_two_data'])
-                    ? "'" . convertToString($treeElement['value_two_data']) . "'"
-                    : convertToString($treeElement['value_two_data']);
+                $deleted = convertToString($treeElement['value_one_data']);
+                $added = convertToString($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
                 return "Property '$name' was $status" ;
@@ -54,6 +50,7 @@ function convertToString(mixed $value): string
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         is_array($value) => "[complex value]",
+        is_string($value) => "'" . $value . "'",
         default => (string)$value
     };
 }
