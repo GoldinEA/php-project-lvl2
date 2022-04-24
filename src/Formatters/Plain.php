@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Plain;
 
+use function PHPUnit\Framework\isNull;
+
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
 function format(array $tree, string $structureName = ''): string
@@ -12,9 +14,11 @@ function format(array $tree, string $structureName = ''): string
         $name = $structureName !== ''
             ? $structureName . '.' . $treeElement['name']
             : $treeElement['name'];
-        $status = getPlainStatus($treeElement['type']);
+        $status = getStatus($treeElement['type']);
 
         switch ($treeElement['type']) {
+            case 'no-change':
+                break;
             case 'changed':
                 $deleted = convertToString($treeElement['value_one_data']);
                 $added = convertToString($treeElement['value_two_data']);
@@ -27,10 +31,10 @@ function format(array $tree, string $structureName = ''): string
                 return format($treeElement['child'], $name);
         }
     }, $tree);
-    return implode(PHP_EOL, array_filter($formattedTree));
+    return implode(PHP_EOL, $formattedTree);
 }
 
-function getPlainStatus(string $typeElement): string
+function getStatus(string $typeElement): string
 {
     return match ($typeElement) {
         'deleted' => 'removed',
@@ -44,9 +48,9 @@ function convertToString(mixed $value): string
 {
     return match (true) {
         is_bool($value) => BOOL_ARRAY[$value],
-        $value === null => 'null',
+        is_null($value) => 'null',
         is_array($value) => "[complex value]",
-        is_string($value) => "'" . $value . "'",
+        is_string($value) => "'$value'",
         default => (string)$value
     };
 }
