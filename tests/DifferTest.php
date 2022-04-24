@@ -39,7 +39,8 @@ class DifferTest extends TestCase
         'plain format combo' => "array",
         'json format json' => "array",
         'json format yaml' => "array",
-        'json format combo' => "array"])
+        'json format combo' => "array"
+    ])
     ]
     public function filesProvider(): array
     {
@@ -103,6 +104,15 @@ class DifferTest extends TestCase
 
     private function createFilePath(string $fileName): string
     {
-        return realpath(implode(DIRECTORY_SEPARATOR, [__DIR__, 'fixtures', $fileName]));
+        return realpath(
+            implode(
+                DIRECTORY_SEPARATOR,
+                [
+                    __DIR__,
+                    'fixtures',
+                    $fileName
+                ]
+            )
+        );
     }
 }

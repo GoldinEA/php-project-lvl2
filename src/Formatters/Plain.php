@@ -52,13 +52,18 @@ function getPlainStatus(string $typeElement): string
         default => ''
     };
 }
-
+function createStringResult(mixed $value): string
+{
+    return !is_null($value) && !is_bool($value) && !is_int($value)
+        ? "'" . convertToString($value) . "'"
+        : convertToString($value);
+}
 function convertToString(mixed $value): string
 {
     return match (true) {
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         is_array($value) => "[complex value]",
-        default => "'$value'",
+        default => "'" . $value . "'",
     };
 }
