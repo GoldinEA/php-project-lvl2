@@ -85,11 +85,6 @@ function format(array $tree, int $depth = 1): string
     return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . $spacesFinal . '}';
 }
 
-function createElement(): string
-{
-
-}
-
 function createChar(string $type): string
 {
     return match ($type) {
