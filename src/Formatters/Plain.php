@@ -54,6 +54,6 @@ function convertToString(mixed $value): string
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         is_array($value) => "[complex value]",
-        default => $value
+        default => toString($value)
     };
 }
