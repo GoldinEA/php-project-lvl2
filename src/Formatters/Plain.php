@@ -17,8 +17,6 @@ function format(array $tree, string $structureName = ''): string
         $status = getStatus($treeElement['type']);
 
         switch ($treeElement['type']) {
-            case 'no-change':
-                break;
             case 'changed':
                 $deleted = convertToString($treeElement['value_one_data']);
                 $added = convertToString($treeElement['value_two_data']);
@@ -31,7 +29,7 @@ function format(array $tree, string $structureName = ''): string
                 return format($treeElement['child'], $name);
         }
     }, $tree);
-    return implode(PHP_EOL, $formattedTree);
+    return implode(PHP_EOL, array_filter($formattedTree));
 }
 
 function getStatus(string $typeElement): string
