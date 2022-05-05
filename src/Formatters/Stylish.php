@@ -14,10 +14,10 @@ function createString(string $name, string $value, int $depth, string $char): st
 function convertToString(mixed $value, int $depth): string
 {
     return match (true) {
-        is_array($value) => '{' . PHP_EOL . implode(
-            PHP_EOL,
+        is_array($value) => '{' . "\n" . implode(
+            "\n",
             createValue($value, $depth)
-        ) . PHP_EOL . createSpaces($depth) . '}',
+        ) . "\n" . createSpaces($depth) . '}',
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,
@@ -61,7 +61,7 @@ function format(array $tree, int $depth = 1): string
                     convertToString($treeElement['value_two_data'], $depth),
                     $depth,
                     createChar('deleted')
-                ) . PHP_EOL
+                ) . "\n"
                     . createString(
                         $elementName,
                         convertToString($treeElement['value_one_data'], $depth),
@@ -79,7 +79,7 @@ function format(array $tree, int $depth = 1): string
         $tree
     );
     $spacesFinal = $depth === 1 ? '' : createSpaces($depth - 1);
-    return '{' . PHP_EOL . implode(PHP_EOL, $formattedTree) . PHP_EOL . $spacesFinal . '}';
+    return '{' . "\n" . implode("\n", $formattedTree) . "\n" . $spacesFinal . '}';
 }
 
 function createChar(string $type): string

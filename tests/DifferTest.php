@@ -106,7 +106,7 @@ class DifferTest extends TestCase
     {
         return realpath(
             implode(
-                DIRECTORY_SEPARATOR,
+                '/',
                 [
                     __DIR__,
                     'fixtures',

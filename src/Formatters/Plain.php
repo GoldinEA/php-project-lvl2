@@ -26,7 +26,7 @@ function format(array $tree, array $structureName = []): string
                 return format($treeElement['child'], $allLevels);
         }
     }, $tree);
-    return implode(PHP_EOL, array_filter($formattedTree));
+    return implode("\n", array_filter($formattedTree));
 }
 
 function getStatus(string $typeElement): string
