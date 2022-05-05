@@ -19,12 +19,9 @@ Options:
   --format <fmt>                Report format [default: stylish]
 DOCOPT;
 
-$params = array(
-    'argv' => array_slice($_SERVER['argv'], 1),
-    'help' => true,
+$params = [
     'version' => '1.0.0',
-    'optionsFirst' => false,
-);
+];
 
 $args = Docopt::handle($doc, $params);
 
