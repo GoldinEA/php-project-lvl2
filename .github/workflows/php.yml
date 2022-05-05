@@ -8,5 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install
+        run: make install
       - name: PHP Lint
-        run: make docker-lint
+        run: make lint
