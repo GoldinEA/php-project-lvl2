@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install
-        run: make install
+      - name: composer-installer-action
+        uses: nanasess/composer-installer-action@v2.0.1
       - name: PHP Lint
         run: make lint
