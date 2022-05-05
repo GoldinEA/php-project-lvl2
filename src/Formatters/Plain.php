@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Plain;
 
-use function PHPUnit\Framework\isNull;
-
 const BOOL_ARRAY = [true => 'true', false => 'false'];
 
 function format(array $tree, array $structureName = []): string

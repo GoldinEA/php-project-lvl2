@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: composer-installer-action
-        uses: nanasess/composer-installer-action@v2.0.1
+        uses: make install
       - name: PHP Lint
-        uses: michaelw90/PHP-Lint@2.1.0
+        uses: make lint
 
