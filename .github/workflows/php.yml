@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: composer-installer-action
-        uses: make install
+        run: make install
       - name: PHP Lint
-        uses: make lint
+        run: make lint
 
