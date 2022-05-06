@@ -18,16 +18,12 @@ class DifferTest extends TestCase
      */
     public function testGendiff(string $format, string $expected, string $file1, string $file2): void
     {
-        $result = genDiff(
+        $actual = genDiff(
             $this->createFilePath($file1),
             $this->createFilePath($file2),
             $format
         );
-
-        $this->assertFileExists(
-            $this->createFilePath($expected),
-            $result
-        );
+        $this->assertEquals(file_get_contents($this->createFilePath($expected)), $actual);
     }
 
     #[ArrayShape([
