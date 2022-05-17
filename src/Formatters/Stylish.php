@@ -14,10 +14,14 @@ function createString(string $name, string $value, int $depth, string $char): st
 function convertToString(mixed $value, int $depth): string
 {
     return match (true) {
-        is_array($value) => '{' . "\n" . implode(
-            "\n",
-            createValue($value, $depth)
-        ) . "\n" . createSpaces($depth) . '}',
+        is_array($value) => sprintf(
+            "{\n%s\n%s}",
+            implode(
+                "\n",
+                createValue($value, $depth)
+            ),
+            createSpaces($depth)
+        ),
         is_bool($value) => BOOL_ARRAY[$value],
         $value === null => 'null',
         default => (string)$value,
@@ -56,18 +60,7 @@ function format(array $tree, int $depth = 1): string
                     $depth,
                     createChar($elementType)
                 ),
-                'changed' => createString(
-                    $elementName,
-                    convertToString($treeElement['value_two_data'], $depth),
-                    $depth,
-                    createChar('deleted')
-                ) . "\n"
-                    . createString(
-                        $elementName,
-                        convertToString($treeElement['value_one_data'], $depth),
-                        $depth,
-                        createChar('added')
-                    ),
+                'changed' => createChangedTreeElement($elementName, $treeElement, $depth),
                 default => createString(
                     $elementName,
                     convertToString($treeElement['value'], $depth),
@@ -89,4 +82,21 @@ function createChar(string $type): string
         'added' => '+',
         default => ' '
     };
+}
+
+function createChangedTreeElement(string $elementName, array $treeElement, int $depth): string
+{
+    $partStringOne = createString(
+        $elementName,
+        convertToString($treeElement['value_two_data'], $depth),
+        $depth,
+        createChar('deleted')
+    );
+    $partStringTwo = createString(
+        $elementName,
+        convertToString($treeElement['value_one_data'], $depth),
+        $depth,
+        createChar('added')
+    );
+    return $partStringOne . "\n" . $partStringTwo;
 }

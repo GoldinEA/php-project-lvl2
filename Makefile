@@ -27,3 +27,9 @@ install:
 
 test-coverage:
 	composer exec --verbose phpunit tests -- --coverage-clover build/logs/clover.xml
+
+test:
+	composer exec --verbose phpunit tests
+
+docker-test:
+	docker run --rm -v $(PWD):/app -w /app composer:latest make test
