@@ -23,10 +23,12 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           # Specify the PHP version
-          php-version: '8.0.3'
+          php-version: '8.1'
       - name: Install
         # Install project
         run: make install
+      - name: Linter
+        run: make lint
       - name: Run test & publish code coverage
         uses: paambaati/codeclimate-action@v2.6.0
         env:
