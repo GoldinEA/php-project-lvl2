@@ -14,15 +14,15 @@ use function Functional\sort;
 /**
  * @throws Exception Стандартное исключение.
  */
-function genDiff(string $directory1, string $directory2, string $format = 'stylish'): string
+function genDiff(string $pathOne, string $pathTwo, string $format = 'stylish'): string
 {
-    $fileDataRaw1 = getFileData($directory1);
-    $fileData1 = parse($fileDataRaw1['data_file'], $fileDataRaw1['format']);
+    $fileDataRawOne = getFileData($pathOne);
+    $fileDataOne = parse($fileDataRawOne['data_file'], $fileDataRawOne['format']);
 
-    $fileDataRaw2 = getFileData($directory2);
-    $fileData2 = parse($fileDataRaw2['data_file'], $fileDataRaw2['format']);
+    $fileDataRawTwo = getFileData($pathTwo);
+    $fileDataTwo = parse($fileDataRawTwo['data_file'], $fileDataRawTwo['format']);
 
-    $tree = buildDiff($fileData1, $fileData2);
+    $tree = buildDiff($fileDataOne, $fileDataTwo);
     return format($tree, $format);
 }
 

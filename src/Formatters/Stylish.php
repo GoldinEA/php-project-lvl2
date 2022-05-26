@@ -4,39 +4,37 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Stylish;
 
-const BOOL_ARRAY = [true => 'true', false => 'false'];
-
-function createString(string $name, string $value, int $depth, string $char): string
+function formatString(string $name, string $value, int $depth, string $char): string
 {
-    return substr(createSpaces($depth), 2) . "$char $name: " . $value;
+    $spaces = substr(createSpaces($depth), 2);
+    return sprintf("%s%s %s: %s", $spaces, $char, $name, $value);
 }
 
-function convertToString(mixed $value, int $depth): string
+function createStylishValue(mixed $value, int $depth): string
 {
-    return match (true) {
-        is_array($value) => sprintf(
-            "{\n%s\n%s}",
-            implode(
-                "\n",
-                createValue($value, $depth)
-            ),
-            createSpaces($depth)
-        ),
-        is_bool($value) => BOOL_ARRAY[$value],
-        $value === null => 'null',
-        default => (string)$value,
-    };
-}
-
-function createValue(array $value, int $depth): array
-{
-    $keys = array_keys($value);
-    $values = array_values($value);
-    return array_map(function ($key, $value) use ($depth) {
-        $spaces = createSpaces($depth);
-        $convertedValue = convertToString($value, $depth + 1);
-        return "   $spaces $key: $convertedValue";
-    }, $keys, $values);
+    switch (gettype($value)) {
+        case 'array':
+            $keys = array_keys($value);
+            $values = array_values($value);
+            return sprintf(
+                "{\n%s\n%s}",
+                implode(
+                    "\n",
+                    array_map(function ($key, $value) use ($depth) {
+                        $spaces = createSpaces($depth);
+                        $convertedValue = createStylishValue($value, $depth + 1);
+                        return "   $spaces $key: $convertedValue";
+                    }, $keys, $values)
+                ),
+                createSpaces($depth)
+            );
+        case 'boolean':
+            return $value ? 'true' : 'false';
+        case 'NULL':
+            return 'null';
+        default:
+            return (string)$value;
+    }
 }
 
 function createSpaces(int $depth): string
@@ -54,49 +52,52 @@ function format(array $tree, int $depth = 1): string
             $elementName = $treeElement['name'];
             $elementType = $treeElement['type'];
             return match ($elementType) {
-                'parent' => createString(
+                'parent' => formatString(
                     $elementName,
                     format($treeElement['child'], $depth + 1),
                     $depth,
-                    createChar($elementType)
+                    ' '
                 ),
                 'changed' => createChangedTreeElement($elementName, $treeElement, $depth),
-                default => createString(
+                'added' => formatString(
                     $elementName,
-                    convertToString($treeElement['value'], $depth),
+                    createStylishValue($treeElement['value'], $depth),
                     $depth,
-                    createChar($elementType)
+                    '+'
+                ),
+                'deleted' => formatString(
+                    $elementName,
+                    createStylishValue($treeElement['value'], $depth),
+                    $depth,
+                    '-'
+                ),
+                'no_change' => formatString(
+                    $elementName,
+                    createStylishValue($treeElement['value'], $depth),
+                    $depth,
+                    ' '
                 ),
             };
         },
         $tree
     );
     $spacesFinal = $depth === 1 ? '' : createSpaces($depth - 1);
-    return '{' . "\n" . implode("\n", $formattedTree) . "\n" . $spacesFinal . '}';
-}
-
-function createChar(string $type): string
-{
-    return match ($type) {
-        'deleted' => '-',
-        'added' => '+',
-        default => ' '
-    };
+    return sprintf("{\n%s\n%s}", implode("\n", $formattedTree), $spacesFinal);
 }
 
 function createChangedTreeElement(string $elementName, array $treeElement, int $depth): string
 {
-    $partStringOne = createString(
+    $partStringOne = formatString(
         $elementName,
-        convertToString($treeElement['value_two_data'], $depth),
+        createStylishValue($treeElement['value_two_data'], $depth),
         $depth,
-        createChar('deleted')
+        '-'
     );
-    $partStringTwo = createString(
+    $partStringTwo = formatString(
         $elementName,
-        convertToString($treeElement['value_one_data'], $depth),
+        createStylishValue($treeElement['value_one_data'], $depth),
         $depth,
-        createChar('added')
+        '+'
     );
     return $partStringOne . "\n" . $partStringTwo;
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Differ\Formatters\Plain;
 
-const BOOL_ARRAY = [true => 'true', false => 'false'];
-
 function format(array $tree, array $structureName = []): string
 {
     $formattedTree = array_map(function ($treeElement) use ($structureName) {
@@ -15,13 +13,14 @@ function format(array $tree, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                $deleted = convertToString($treeElement['value_one_data']);
-                $added = convertToString($treeElement['value_two_data']);
+                $deleted = createPlainValue($treeElement['value_one_data']);
+                $added = createPlainValue($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
                 return "Property '$name' was $status" ;
             case 'added':
-                return "Property '$name' was $status with value: " . convertToString($treeElement['value']);
+                $stringValue = createPlainValue($treeElement['value']);
+                return "Property '$name' was $status with value: $stringValue";
             case 'parent':
                 return format($treeElement['child'], $allLevels);
         }
@@ -39,10 +38,10 @@ function getStatus(string $typeElement): string
     };
 }
 
-function convertToString(mixed $value): string
+function createPlainValue(mixed $value): string
 {
     return match (true) {
-        is_bool($value) => BOOL_ARRAY[$value],
+        is_bool($value) => $value ? 'true' : 'false',
         is_null($value) => 'null',
         is_array($value) => "[complex value]",
         is_string($value) => "'$value'",

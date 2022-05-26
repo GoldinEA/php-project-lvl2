@@ -15,17 +15,10 @@ use function Differ\Formatters\Stylish\format as formatStylish;
  */
 function format(array $diff, string $format): string
 {
-    if ($format === 'stylish') {
-        return formatStylish($diff);
-    }
-
-    if ($format === 'json') {
-        return formatJson($diff);
-    }
-
-    if ($format === 'plain') {
-        return formatPlain($diff);
-    }
-
-    throw new Exception("$format is not found.");
+    return match ($format) {
+        'stylish' => formatStylish($diff),
+        'json' => formatJson($diff),
+        'plain' => formatPlain($diff),
+        default => throw new Exception("$format is not found."),
+    };
 }
