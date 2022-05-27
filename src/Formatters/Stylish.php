@@ -29,7 +29,7 @@ function createStylishValue(mixed $value, int $depth): string
                 createSpaces($depth)
             );
         case 'boolean':
-            return $value ? 'true' : 'false';
+            return $value === true ? 'true' : 'false';
         case 'NULL':
             return 'null';
         default:
@@ -50,7 +50,7 @@ function format(array $tree, int $depth = 1): string
     $formattedTree = array_map(
         function ($treeElement) use ($depth) {
             $elementName = $treeElement['name'];
-            $elementType = $treeElement['type'];
+            $elementType = (string)$treeElement['type'];
             return match ($elementType) {
                 'parent' => formatString(
                     $elementName,
