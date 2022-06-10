@@ -59,22 +59,19 @@ function format(array $tree, int $depth = 1): string
                         ' '
                     );
                 case 'changed':
-                    return (function () use ($elementName, $treeElement, $depth) {
-                        $partStringOne = formatString(
-                            $elementName,
-                            createStylishValue($treeElement['value_two_data'], $depth),
-                            $depth,
-                            '-'
-                        );
-                        $partStringTwo = formatString(
-                            $elementName,
-                            createStylishValue($treeElement['value_one_data'], $depth),
-                            $depth,
-                            '+'
-                        );
-                        return $partStringOne . "\n" . $partStringTwo;
-                    }
-                    )();
+                    $partStringOne = formatString(
+                        $elementName,
+                        createStylishValue($treeElement['value_two_data'], $depth),
+                        $depth,
+                        '-'
+                    );
+                    $partStringTwo = formatString(
+                        $elementName,
+                        createStylishValue($treeElement['value_one_data'], $depth),
+                        $depth,
+                        '+'
+                    );
+                    return "$partStringOne\n$partStringTwo";
                 case 'added':
                     return formatString(
                         $elementName,
