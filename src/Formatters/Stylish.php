@@ -89,7 +89,7 @@ function format(array $tree, int $depth = 1): string
                         $depth,
                         '-'
                     );
-                case                'no_change' :
+                case 'no_change':
                     return formatString(
                         $elementName,
                         createStylishValue($treeElement['value'], $depth),
@@ -97,7 +97,8 @@ function format(array $tree, int $depth = 1): string
                         ' '
                     );
             }
-        }, $tree
+        },
+        $tree
     );
     $spacesFinal = $depth === 1 ? '' : createSpaces($depth - 1);
     $convertedTree = implode("\n", $formattedTree);
