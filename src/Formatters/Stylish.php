@@ -49,15 +49,17 @@ function format(array $tree, int $depth = 1): string
         function ($treeElement) use ($depth) {
             $elementName = $treeElement['name'];
             $elementType = (string)$treeElement['type'];
-            return match ($elementType) {
-                'parent' => formatString(
-                    $elementName,
-                    format($treeElement['child'], $depth + 1),
-                    $depth,
-                    ' '
-                ),
-                'changed' => (
-                    function () use ($elementName, $treeElement, $depth) {
+
+            switch ($elementType) {
+                case 'parent':
+                    return formatString(
+                        $elementName,
+                        format($treeElement['child'], $depth + 1),
+                        $depth,
+                        ' '
+                    );
+                case 'changed':
+                    return (function () use ($elementName, $treeElement, $depth) {
                         $partStringOne = formatString(
                             $elementName,
                             createStylishValue($treeElement['value_two_data'], $depth),
@@ -72,28 +74,30 @@ function format(array $tree, int $depth = 1): string
                         );
                         return $partStringOne . "\n" . $partStringTwo;
                     }
-                )(),
-                'added' => formatString(
-                    $elementName,
-                    createStylishValue($treeElement['value'], $depth),
-                    $depth,
-                    '+'
-                ),
-                'deleted' => formatString(
-                    $elementName,
-                    createStylishValue($treeElement['value'], $depth),
-                    $depth,
-                    '-'
-                ),
-                'no_change' => formatString(
-                    $elementName,
-                    createStylishValue($treeElement['value'], $depth),
-                    $depth,
-                    ' '
-                ),
-            };
-        },
-        $tree
+                    )();
+                case 'added':
+                    return formatString(
+                        $elementName,
+                        createStylishValue($treeElement['value'], $depth),
+                        $depth,
+                        '+'
+                    );
+                case 'deleted':
+                    return formatString(
+                        $elementName,
+                        createStylishValue($treeElement['value'], $depth),
+                        $depth,
+                        '-'
+                    );
+                case                'no_change' :
+                    return formatString(
+                        $elementName,
+                        createStylishValue($treeElement['value'], $depth),
+                        $depth,
+                        ' '
+                    );
+            }
+        }, $tree
     );
     $spacesFinal = $depth === 1 ? '' : createSpaces($depth - 1);
     $convertedTree = implode("\n", $formattedTree);
