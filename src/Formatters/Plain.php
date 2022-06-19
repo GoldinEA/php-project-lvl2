@@ -13,13 +13,13 @@ function format(array $tree, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                $deleted = createPlainValue($treeElement['value_one_data']);
-                $added = createPlainValue($treeElement['value_two_data']);
+                $deleted = createValue($treeElement['value_one_data']);
+                $added = createValue($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
                 return "Property '$name' was $status" ;
             case 'added':
-                $stringValue = createPlainValue($treeElement['value']);
+                $stringValue = createValue($treeElement['value']);
                 return "Property '$name' was $status with value: $stringValue";
             case 'parent':
                 return format($treeElement['child'], $allLevels);
@@ -38,7 +38,7 @@ function getStatus(string $typeElement): string
     };
 }
 
-function createPlainValue(mixed $value): string
+function createValue(mixed $value): string
 {
     return match (true) {
         is_bool($value) => $value ? 'true' : 'false',
