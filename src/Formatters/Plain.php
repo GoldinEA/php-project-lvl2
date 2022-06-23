@@ -13,13 +13,13 @@ function format(array $tree, array $structureName = []): string
 
         switch ($treeElement['type']) {
             case 'changed':
-                $deleted = createValue($treeElement['value_one_data']);
-                $added = createValue($treeElement['value_two_data']);
+                $deleted = formatValue($treeElement['value_one_data']);
+                $added = formatValue($treeElement['value_two_data']);
                 return "Property '$name' was $status. From $added to $deleted";
             case 'deleted':
-                return "Property '$name' was $status" ;
+                return "Property '$name' was $status";
             case 'added':
-                $stringValue = createValue($treeElement['value']);
+                $stringValue = formatValue($treeElement['value']);
                 return "Property '$name' was $status with value: $stringValue";
             case 'parent':
                 return format($treeElement['child'], $allLevels);
@@ -30,21 +30,30 @@ function format(array $tree, array $structureName = []): string
 
 function getStatus(string $typeElement): string
 {
-    return match ($typeElement) {
-        'deleted' => 'removed',
-        'added' => 'added',
-        'changed' => 'updated',
-        default => ''
-    };
+    switch ($typeElement) {
+        case 'deleted':
+            return 'removed';
+        case 'added':
+            return 'added';
+        case 'changed':
+            return 'updated';
+        default:
+            return '';
+    }
 }
 
-function createValue(mixed $value): string
+function formatValue(mixed $value): string
 {
-    return match (true) {
-        is_bool($value) => $value ? 'true' : 'false',
-        is_null($value) => 'null',
-        is_array($value) => "[complex value]",
-        is_string($value) => "'$value'",
-        default => (string)$value
-    };
+    switch (true) {
+        case is_bool($value):
+            return $value ? 'true' : 'false';
+        case is_null($value):
+            return 'null';
+        case is_array($value):
+            return "[complex value]";
+        case is_string($value):
+            return "'$value'";
+        default:
+            return (string)$value;
+    }
 }

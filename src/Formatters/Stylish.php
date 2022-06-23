@@ -10,7 +10,7 @@ function formatString(string $name, string $value, int $depth, string $char): st
     return "$spaces$char $name: $value";
 }
 
-function createValue(mixed $value, int $depth): string
+function formatValue(mixed $value, int $depth): string
 {
     switch (gettype($value)) {
         case 'array':
@@ -20,7 +20,7 @@ function createValue(mixed $value, int $depth): string
                 "\n",
                 array_map(function ($key, $value) use ($depth) {
                     $spaces = createSpaces($depth);
-                    $convertedValue = createValue($value, $depth + 1);
+                    $convertedValue = formatValue($value, $depth + 1);
                     return "   $spaces $key: $convertedValue";
                 }, $keys, $values)
             );
@@ -61,13 +61,13 @@ function format(array $tree, int $depth = 1): string
                 case 'changed':
                     $partStringOne = formatString(
                         $elementName,
-                        createValue($treeElement['value_two_data'], $depth),
+                        formatValue($treeElement['value_two_data'], $depth),
                         $depth,
                         '-'
                     );
                     $partStringTwo = formatString(
                         $elementName,
-                        createValue($treeElement['value_one_data'], $depth),
+                        formatValue($treeElement['value_one_data'], $depth),
                         $depth,
                         '+'
                     );
@@ -75,21 +75,21 @@ function format(array $tree, int $depth = 1): string
                 case 'added':
                     return formatString(
                         $elementName,
-                        createValue($treeElement['value'], $depth),
+                        formatValue($treeElement['value'], $depth),
                         $depth,
                         '+'
                     );
                 case 'deleted':
                     return formatString(
                         $elementName,
-                        createValue($treeElement['value'], $depth),
+                        formatValue($treeElement['value'], $depth),
                         $depth,
                         '-'
                     );
                 case 'no_change':
                     return formatString(
                         $elementName,
-                        createValue($treeElement['value'], $depth),
+                        formatValue($treeElement['value'], $depth),
                         $depth,
                         ' '
                     );
